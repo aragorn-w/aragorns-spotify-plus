@@ -1,9 +1,11 @@
 # aragorns-spotify-plus
 
+## Motivation
 This is just a spotipy python script I made to give me some extra features that the regular Spotify desktop app doesn't have, like checking what playlists of mine a song I want to add is already in (before I add it).
 
 I am a particularly picky person about my music, since music is pretty much the only thing that keeps me consistently productive and happy.
 
+## My Music Organizational System
 As of June 19th, 2022, I am a CS-interested high school junior with a beginner/intermediate-level knowledge of AI/DL/ML, so I feel I can be just a little cocky enough to control the personal music data I feed to the Spotify algorithm by controlling what songs the algorithm sees me add, like, and listen to based on my following preference for organizing music:
 * "Genres" playlists that only contain songs that strongly associate with a particular sub-genre identified by the Spotify clustering algoritm's label-creation (i.e. a "modern alt rock" sub-genre playlist) (I don't want the data from these playlists to be seen by the algorithm, since I'm aware that the algorithm gives weight to any song that you add to your playlists)
 * "Mixtapes" playlists that contain songs I arbitrarily feel best suit the mixtape's mood (these are playlists that I actually listen to and want for its data to be fully fed to the Spotify algorithm) (i.e. a "Smooth Man" mixtape playlist whose songs' "moods" makes me feel like being the smoothest man alive)
@@ -12,10 +14,12 @@ As of June 19th, 2022, I am a CS-interested high school junior with a beginner/i
 * "IMMEDIATE TO-SORT" playlist that has high-priority songs I really like and need to decide at a later time which sub-genres and mixtapes it best fits for my own listening purposes
 * "LIBRARY TO-SORT" playlist that is the same as the IMMEDIATE TO-SORT playlist that just has lower-priority songs
 
+## Application Structure
 The structure of this perpetually-running personal "Spotify-plus" python project is pretty simple: A service manager script (which is running continuously on an old Macbook Pro 15" of mine) runs and manages each service (a single, modular Spotify-plus feature I want) and its respective thread.
 
 Ideally, I will be able to create my own command-line interface for giving inputs to the service manager (like for checking what personal playlists a song associated with an inputted Spotify song-link is within, if any).
 
+## Services Wishlist
 As of June 19th, 2022, here are the services I plan to have implemented, eventually:
 * A meta-service that starts/stops an inputted service (not for development or maintenance of a service, just for in case I don't want to use a particular service at the moment)
 * Playlist fetcher for checking what playlists a song-link I want to add is within
@@ -26,6 +30,7 @@ As of June 19th, 2022, here are the services I plan to have implemented, eventua
 * A scheduled songs-exporter for moving the songs from my personal Discover Weekly and Release Radar playlists to my LIBRARY TO-SORT playlist
     * Should ignore a song if it is already in the LIBRARY TO-SORT playlist, in the IMMEDIATE TO-SORT playlist, or in at least one genre-playlist
 
+## Interfaces Wishlist
 As of June 19th, 2022, here are the interfaces I plan to have implemented, eventually:
 * The .exe command-line interface mentioned above with access to all services mentioned above
     * Maybe a basic-GUI desktop app interface as well
