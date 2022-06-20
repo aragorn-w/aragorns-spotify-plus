@@ -22,5 +22,4 @@ As of June 19th, 2022, here are the services I plan to have implemented, eventua
 * \[1\] (not a service, but implementation strategy): To stop the Spotify algorithm from learning song recommendations from the songs (that I somewhat like in the moment) I add to sub-genre playlists, I will be storing my genre-playlists and archived mixtape-playlists on a second Spotify account (attached with the duo premium plan to my main account for both this and also because Tesla sucks at Telsa-iPhone Spotify relations) that I'll be accessing on my desktop via a virtual machine
 * An active mixtape-playlist replication manager to keep an exact copy of a mixtape from my primary Spotify account on my secondary Spotify account (the one described in \[1\])
     * i.e. any song added/removed to the mixtape on my primary Spotify account should also be added/removed on my secondary Spotify account (if the mixtape is linked to the secondary account in the first place)
-    * Be able to create/remove mixtape linkages between the accounts
-        * Hello
+    * Be able to create/remove-and-keep-current-playlist/remove-and-delete-playlist mixtape linkages between the accounts
