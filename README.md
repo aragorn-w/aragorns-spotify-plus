@@ -19,19 +19,11 @@ The structure of this perpetually-running personal "Spotify-plus" python project
 
 Ideally, I will be able to create my own command-line interface for giving inputs to the service manager (like for checking what personal playlists a song associated with an inputted Spotify song-link is within, if any).
 
-## Services Wishlist
-As of June 19th, 2022, here are the services I plan to have implemented, eventually:
-* A meta-service that starts/stops an inputted service (not for development or maintenance of a service, just for in case I don't want to use a particular service at the moment)
-* Playlist fetcher for checking what playlists a song-link I want to add is within
-* \[1\] (not a service, but implementation strategy): To stop the Spotify algorithm from learning song recommendations from the songs (that I somewhat like in the moment) I add to sub-genre playlists, I will be storing my genre-playlists and archived mixtape-playlists on a second Spotify account (attached with the duo premium plan to my main account for both this and also because Tesla sucks at Telsa-iPhone Spotify relations) that I'll be accessing on my desktop via a virtual machine
-* An active mixtape-playlist replication manager to keep an exact copy of a mixtape from my primary Spotify account on my secondary Spotify account (the one described in \[1\])
-    * i.e. any song added/removed to the mixtape on my primary Spotify account should also be added/removed on my secondary Spotify account (if the mixtape is linked to the secondary account in the first place)
-    * Be able to create/remove-and-keep-current-playlist/remove-and-delete-playlist mixtape linkages between the accounts
-* A scheduled songs-exporter for moving the songs from my personal Discover Weekly and Release Radar playlists to my LIBRARY TO-SORT playlist
-    * Should ignore a song if it is already in the LIBRARY TO-SORT playlist, in the IMMEDIATE TO-SORT playlist, or in at least one genre-playlist
+### **\[1\]**
+> To stop the Spotify algorithm from learning song recommendations from the songs (that I somewhat like in the moment) I add to sub-genre playlists, I will be storing my genre-playlists and archived mixtape-playlists on a second Spotify account (attached with the duo premium plan to my main account for both this and also because Tesla sucks at Telsa-iPhone Spotify relations) that I'll be accessing on my desktop via a virtual machine
 
 ## Interfaces Wishlist
 As of June 19th, 2022, here are the interfaces I plan to have implemented, eventually:
-* The .exe command-line interface mentioned above with access to all services mentioned above
+* The .exe command-line interface mentioned above with access to all services
     * Maybe a basic-GUI desktop app interface as well
-* A basic-GUI iOS app with the same access to the services mentioned above (to make it easier to access both Spotify accounts on my iPhone without somehow remotely accessing the virtual machine mentioned in \[1\]
+* A basic-GUI iOS app with the same access to the services (to make it easier to access both Spotify accounts on my iPhone without somehow remotely accessing the virtual machine mentioned in **\[1\]**
