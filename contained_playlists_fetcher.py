@@ -5,14 +5,24 @@ import os
 import spotipy
 from spotipy.oauth2 import SpotifyClientCredentials
 
-birdy_uri = 'spotify:artist:2WX2uTcsvV5OnS0inACecP'
-spotify = spotipy.Spotify(client_credentials_manager=SpotifyClientCredentials(client_id=os.getenv('SPOTIPY_CLIENT_ID_1'), client_secret=os.getenv('SPOTIPY_CLIENT_SECRET_1')))
 
-results = spotify.artist_albums(birdy_uri, album_type='album')
-albums = results['items']
-while results['next']:
-    results = spotify.next(results)
-    albums.extend(results['items'])
+client_credentials_manager = SpotifyClientCredentials(client_id=os.getenv('SPOTIPY_CLIENT_ID_1'), client_secret=os.getenv('SPOTIPY_CLIENT_SECRET_1'))
+sp = spotipy.Spotify(client_credentials_manager=client_credentials_manager)
 
-for album in albums:
-    print(album['name'])
+library_account = os.getenv('SPOTIFY_PLUS_SECONDARY_ACCOUNT_USER_ID')
+
+playlists = sp.user_playlists(library_account)
+
+while playlists:
+    for i, playlist in enumerate(playlists['items']):
+        print(
+            "%4d %s %s" %
+            (i +
+             1 +
+             playlists['offset'],
+             playlist['uri'],
+             playlist['name']))
+    if playlists['next']:
+        playlists = sp.next(playlists)
+    else:
+        playlists = None
