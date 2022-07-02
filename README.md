@@ -10,6 +10,7 @@ As of June 19th, 2022, I am a CS-interested high school junior with a beginner/i
 * "Genres" playlists that only contain songs that strongly associate with a particular sub-genre identified by the Spotify clustering algoritm's label-creation (i.e. a "modern alt rock" sub-genre playlist) (I don't want the data from these playlists to be seen by the algorithm, since I'm aware that the algorithm gives weight to any song that you add to your playlists)
 * "Mixtapes" playlists that contain songs I arbitrarily feel best suit the mixtape's mood (these are playlists that I actually listen to and want for its data to be fully fed to the Spotify algorithm) (i.e. a "Smooth Man" mixtape playlist whose songs' "moods" makes me feel like being the smoothest man alive)
 * "Archived Mixtapes" playlists that are just mixtapes I no longer listen to but might have songs or general song-moods I could reference for making new mixtapes
+* "Records" playlists that are the same as Mixtape playlists but just contain a single song that defines the mood
 * "Artist Bests" playlists that only contain songs from a singular artist since there are a few artists I very much love more than at least 1 or 2 songs from, warranting a playlist dedicated to their "best" (IMO) songs
 * "IMMEDIATE TO-SORT" playlist that has high-priority songs I really like and need to decide at a later time which sub-genres and mixtapes it best fits for my own listening purposes
 * "LIBRARY TO-SORT" playlist that is the same as the IMMEDIATE TO-SORT playlist that just has lower-priority songs
