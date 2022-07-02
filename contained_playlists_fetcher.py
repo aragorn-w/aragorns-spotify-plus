@@ -11,12 +11,3 @@ sp = spotipy.Spotify(client_credentials_manager=client_credentials_manager)
 
 library_account = os.getenv('SPOTIFY_PLUS_SECONDARY_ACCOUNT_USER_ID')
 
-playlists = sp.user_playlists(library_account)
-
-while playlists:
-    for i, playlist in enumerate(playlists['items']):
-        print("%s %s" % (playlist['uri'], playlist['name']))
-    if playlists['next']:
-        playlists = sp.next(playlists)
-    else:
-        playlists = None
