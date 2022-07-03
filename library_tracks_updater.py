@@ -2,56 +2,75 @@
 
 from utils.library_loader import *
 
+import json
+
 
 # Helper resources for updating the playlist library JSONs
 
-def get_updated_playlist(playlist_id, playlist_tracks, playlist_json_name=None):
-    new_playlist_tracks = get_simplified_tracks(playlist_id)
-    # Optimization note: Finding changes to a playlist
-    if not playlists_are_equal(playlist_tracks, new_playlist_tracks):        
+def get_updated_playlist(tracks, new_tracks, playlist_json_name=None):
+    if not playlists_are_equal(tracks, new_tracks):
         if playlist_json_name:
             with open(f"saved_libraries/{playlist_json_name}.json", "w", encoding="utf-8") as outFile:
-                json.dump(playlist_tracks, outFile, ensure_ascii=False, indent=4)
-        
-        return True, new_playlist_tracks
-    return False, new_playlist_tracks
+                json.dump(new_tracks, outFile, ensure_ascii=False, indent=4)
+        print("    New added/deleted playlist track(s) detected!")
+        return True, new_tracks
+    return False, new_tracks
 
-def update_playlist_folder(playlist_id_to_tracks, playlist_folder_json_name):
+def update_playlist_folder(playlist_id_to_tracks, new_playlist_id_to_tracks, playlist_folder_json_name):
     any_playlist_changed = False
 
+    new_created_playlist_ids = set(new_playlist_id_to_tracks.keys())
+    new_deleted_playlist_ids = []
+
     for playlist_id in playlist_id_to_tracks:
-        playlist_updated, new_playlist = get_updated_playlist(playlist_id, playlist_id_to_tracks[playlist_id])
+        # New library shows that playlist no longer exists
+        if playlist_id not in new_playlist_id_to_tracks:
+            print("    New deleted playlist(s) detected!")
+            new_deleted_playlist_ids.append(playlist_id)
+            any_playlist_changed = True
+            continue
+
+        new_created_playlist_ids.remove(playlist_id)
+
+        playlist_updated, new_tracks = get_updated_playlist(playlist_id_to_tracks[playlist_id], new_playlist_id_to_tracks[playlist_id])
         any_playlist_changed = any_playlist_changed or playlist_updated
 
         if playlist_updated:
-            playlist_id_to_tracks[playlist_id] = new_playlist
+            playlist_id_to_tracks[playlist_id] = new_tracks
     
+    for playlist_id in new_deleted_playlist_ids:
+        playlist_id_to_tracks.pop(playlist_id)
+
+    if new_created_playlist_ids:
+        print("    New created playlist(s) detected!")
+        for playlist_id in new_created_playlist_ids:
+            playlist_id_to_tracks[playlist_id] = new_playlist_id_to_tracks[playlist_id]
+        any_playlist_changed = True
+
     if any_playlist_changed:
         with open(f"saved_libraries/{playlist_folder_json_name}.json", "w", encoding="utf-8") as outFile:
-            json.dump(playlist_id_to_tracks, outFile, ensure_ascii=False, indent=4)
+            json.dump(new_playlist_id_to_tracks, outFile, ensure_ascii=False, indent=4)
         return True
     return False
 
 
 if __name__ == '__main__':
-    # Load in the saved playlist library JSONs as usable Python objects
-
-    immediate_to_sort_tracks = load_library("immediate_to_sort_tracks")
-    library_to_sort_tracks = load_library("library_to_sort_tracks")
-
-    genre_id_to_tracks = load_library("genre_id_to_tracks")
-    archived_mixtape_id_to_tracks = load_library("archived_mixtape_id_to_tracks")
-    archived_record_id_to_tracks = load_library("archived_record_id_to_tracks")
-
-
     # Main loop for updating the saved playlist library JSONs
 
     while True:
-        print("New library-update iteration...")
+        print("\nNew library-update iteration...")
 
-        _, immediate_to_sort_tracks = get_updated_playlist(globals.IMMEDIATE_TO_SORT_ID, immediate_to_sort_tracks, "immediate_to_sort_tracks")
-        _, library_to_sort_tracks = get_updated_playlist(globals.LIBRARY_TO_SORT_ID, library_to_sort_tracks, "library_to_sort_tracks")
+        _, globals.IMMEDIATE_TO_SORT_TRACKS = get_updated_playlist(globals.IMMEDIATE_TO_SORT_TRACKS, globals.NEW_IMMEDIATE_TO_SORT[1], "immediate_to_sort_tracks")
+        print("Finished updating IMMEDIATE TO-SORT")
+        _, globals.LIBRARY_TO_SORT_TRACKS = get_updated_playlist(globals.LIBRARY_TO_SORT_TRACKS, globals.NEW_LIBRARY_TO_SORT[1], "library_to_sort_tracks")
+        print("Finished updating LIBRARY TO-SORT")
 
-        update_playlist_folder(genre_id_to_tracks, "genre_id_to_tracks")
-        update_playlist_folder(archived_mixtape_id_to_tracks, "archived_mixtape_id_to_tracks")
-        update_playlist_folder(archived_record_id_to_tracks, "archived_record_id_to_tracks")
+        update_playlist_folder(globals.GENRES, globals.NEW_GENRES, "genre_id_to_tracks")
+        print("Finished updating Genres")
+        update_playlist_folder(globals.ARCHIVED_MIXTAPES, globals.NEW_ARCHIVED_MIXTAPES, "archived_mixtape_id_to_tracks")
+        print("Finished updating Archived Mixtapes")
+        update_playlist_folder(globals.ARCHIVED_RECORDS, globals.NEW_ARCHIVED_RECORDS, "archived_record_id_to_tracks")
+        print("Finished updating Archived Records")
+
+        globals.get_libraries()
+        print("Finished getting new libraries")
