@@ -46,9 +46,11 @@ if __name__ == '__main__':
 
     # Main loop for updating the saved playlist library JSONs
 
-    while True:        
-        _, immediate_to_sort_tracks = get_updated_playlist(IMMEDIATE_TO_SORT_ID, immediate_to_sort_tracks, "immediate_to_sort_tracks")
-        _, library_to_sort_tracks = get_updated_playlist(LIBRARY_TO_SORT_ID, library_to_sort_tracks, "library_to_sort_tracks")
+    while True:
+        print("New library-update iteration...")
+
+        _, immediate_to_sort_tracks = get_updated_playlist(globals.IMMEDIATE_TO_SORT_ID, immediate_to_sort_tracks, "immediate_to_sort_tracks")
+        _, library_to_sort_tracks = get_updated_playlist(globals.LIBRARY_TO_SORT_ID, library_to_sort_tracks, "library_to_sort_tracks")
 
         update_playlist_folder(genre_id_to_tracks, "genre_id_to_tracks")
         update_playlist_folder(archived_mixtape_id_to_tracks, "archived_mixtape_id_to_tracks")
