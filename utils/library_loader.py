@@ -64,6 +64,7 @@ def load_all_playlist_id_to_tracks():
 
     return all_playlist_id_to_tracks
 
+# Each track is a dict with is_local, ID, and name
 def get_simplified_tracks(playlist_id):
     simplified_tracks = []
 
