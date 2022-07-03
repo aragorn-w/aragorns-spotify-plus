@@ -29,10 +29,10 @@ ARCHIVED_MIXTAPES = load_library("archived_mixtape_id_to_tracks")
 ARCHIVED_RECORDS = load_library("archived_record_id_to_tracks")
 
 
-# Get and initialize the new libraries
+# Initialize the new libraries (but don't fetch)
 
-NEW_IMMEDIATE_TO_SORT = [None, None]
-NEW_LIBRARY_TO_SORT = [None, None]
+NEW_IMMEDIATE_TO_SORT = ["06sD1Pm4x5hLo2gq9d8G6G", None]
+NEW_LIBRARY_TO_SORT = ["2pdYtdLZcMLG6kAm7mRb4M", None]
 NEW_GENRES = {}
 NEW_ARCHIVED_MIXTAPES = {}
 NEW_ARCHIVED_RECORDS = {}
@@ -67,6 +67,7 @@ def get_simplified_tracks(playlist_id):
     
     return simplified_tracks
 
+# OPTIMIZE: Figure out how the hell to speed this up (ex. multithreading, multiple clients, etc)
 def get_libraries():
     global SPOTIFY_API, LIBRARY_SPOTIFY_ACCOUNT_ID
     
@@ -99,4 +100,3 @@ def get_libraries():
             current_page = SPOTIFY_API.next(current_page)
         else:
             current_page = None
-get_libraries()

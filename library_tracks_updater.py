@@ -3,6 +3,7 @@
 from utils.library_loader import *
 
 import json
+from time import time
 
 
 # Helper resources for updating the playlist library JSONs
@@ -60,6 +61,11 @@ if __name__ == '__main__':
     while True:
         print("\nNew library-update iteration...")
 
+        print("Started getting new libraries...")
+        start = time()
+        globals.get_libraries()
+        print(f"Finished getting new libraries ({round(time() - start, 3)}s)")
+
         _, globals.IMMEDIATE_TO_SORT_TRACKS = get_updated_playlist(globals.IMMEDIATE_TO_SORT_TRACKS, globals.NEW_IMMEDIATE_TO_SORT[1], "immediate_to_sort_tracks")
         print("Finished updating IMMEDIATE TO-SORT")
         _, globals.LIBRARY_TO_SORT_TRACKS = get_updated_playlist(globals.LIBRARY_TO_SORT_TRACKS, globals.NEW_LIBRARY_TO_SORT[1], "library_to_sort_tracks")
@@ -71,6 +77,3 @@ if __name__ == '__main__':
         print("Finished updating Archived Mixtapes")
         update_playlist_folder(globals.ARCHIVED_RECORDS, globals.NEW_ARCHIVED_RECORDS, "archived_record_id_to_tracks")
         print("Finished updating Archived Records")
-
-        globals.get_libraries()
-        print("Finished getting new libraries")
