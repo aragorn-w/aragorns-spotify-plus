@@ -8,13 +8,12 @@ from spotipy.oauth2 import SpotifyClientCredentials
 
 # Establish Spotify client credentials
 
-CLIENT_CREDENTIALS_MANAGER = SpotifyClientCredentials(client_id=getenv('SPOTIPY_CLIENT_ID_CONTAINED_PLAYLISTS_FETCHER'), client_secret=getenv('SPOTIPY_CLIENT_SECRET_CONTAINED_PLAYLISTS_FETCHER'))
+CLIENT_CREDENTIALS_MANAGER = SpotifyClientCredentials(client_id=getenv('SPOTIFY_CLIENT_ID_1'), client_secret=getenv('SPOTIFY_CLIENT_SECRET_1'))
 SPOTIFY_API = spotipy.Spotify(client_credentials_manager=CLIENT_CREDENTIALS_MANAGER)
 
 LIBRARY_SPOTIFY_ACCOUNT_ID = getenv('SPOTIFY_PLUS_SECONDARY_ACCOUNT_USER_ID')
 
 API_SLEEP_TIME = 0
-# 0.0 --> 
 
 def assert_api_limit(response_dict):
     try:
