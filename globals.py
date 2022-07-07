@@ -1,15 +1,21 @@
+import sys
+sys.dont_write_bytecode = True
 from os import getenv
 import json
 from threading import Thread
+from itertools import cycle
 
 import spotipy
 from spotipy.oauth2 import SpotifyClientCredentials
 
 
+
 # Establish Spotify client credentials
 
-CLIENT_CREDENTIALS_MANAGER = SpotifyClientCredentials(client_id=getenv('SPOTIFY_CLIENT_ID_1'), client_secret=getenv('SPOTIFY_CLIENT_SECRET_1'))
-SPOTIFY_API = spotipy.Spotify(client_credentials_manager=CLIENT_CREDENTIALS_MANAGER)
+NUM_CLIENTS = 4
+API_POOL = cycle([spotipy.Spotify(client_credentials_manager=SpotifyClientCredentials(client_id=getenv(f"SPOTIFY_CLIENT_ID_{client_num}"), client_secret=getenv(f"SPOTIFY_CLIENT_SECRET_{client_num}"))) for client_num in range(1, NUM_CLIENTS, 1)])
+def next_api():
+    return next(API_POOL)
 
 LIBRARY_SPOTIFY_ACCOUNT_ID = getenv('SPOTIFY_PLUS_SECONDARY_ACCOUNT_USER_ID')
 
@@ -50,11 +56,9 @@ NEW_ARCHIVED_RECORDS = {}
 
 # Each track is a dict with is_local, ID, and name
 def get_simplified_tracks(playlist_id):
-    global SPOTIFY_API
-
     simplified_tracks = []
 
-    current_page = SPOTIFY_API.playlist_items(f'spotify:playlist:{playlist_id}', fields='items.track.id,items.track.is_local,items.track.name,next')
+    current_page = next_api().playlist_items(f'spotify:playlist:{playlist_id}', fields='items.track.id,items.track.is_local,items.track.name,next')
     assert_api_limit(current_page)
 
     while current_page:
@@ -74,7 +78,7 @@ def get_simplified_tracks(playlist_id):
             simplified_tracks.append(new_track)
 
         if current_page['next']:
-            current_page = SPOTIFY_API.next(current_page)
+            current_page = next_api().next(current_page)
             assert_api_limit(current_page)
             
         else:
@@ -87,7 +91,7 @@ def store_simplified_tracks(library, key, playlist_id):
 
 # OPTIMIZE: Figure out how the hell to speed this up (ex. multithreading, multiple clients, etc)
 def get_libraries():
-    global SPOTIFY_API, LIBRARY_SPOTIFY_ACCOUNT_ID
+    global LIBRARY_SPOTIFY_ACCOUNT_ID
     
     global NEW_IMMEDIATE_TO_SORT, NEW_LIBRARY_TO_SORT, NEW_GENRES, NEW_ARCHIVED_MIXTAPES, NEW_ARCHIVED_RECORDS
 
@@ -98,7 +102,7 @@ def get_libraries():
 
     threads = []
 
-    current_page = SPOTIFY_API.user_playlists(LIBRARY_SPOTIFY_ACCOUNT_ID)
+    current_page = next_api().user_playlists(LIBRARY_SPOTIFY_ACCOUNT_ID)
     assert_api_limit(current_page)
     while current_page:
         for playlist in current_page['items']:
@@ -128,7 +132,7 @@ def get_libraries():
                 threads.append(thread)
 
         if current_page['next']:
-            current_page = SPOTIFY_API.next(current_page)
+            current_page = next_api().next(current_page)
             assert_api_limit(current_page)
         else:
             current_page = None

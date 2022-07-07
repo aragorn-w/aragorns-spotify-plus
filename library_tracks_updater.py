@@ -1,9 +1,11 @@
 # Background daemon process for continuously updating the saved JSONs of all the secondary Spotify account's playlists
 
-from utils.library_loader import *
-
+import sys
+sys.dont_write_bytecode = True
 import json
 from time import sleep, time
+
+from utils.library_loader import *
 
 
 # Helper resources for updating the playlist library JSONs
@@ -71,16 +73,16 @@ if __name__ == '__main__':
         print(f"Finished getting new libraries ({round(time() - start, 3)}s)")
 
         _, globals.IMMEDIATE_TO_SORT_TRACKS = get_updated_playlist(globals.IMMEDIATE_TO_SORT_TRACKS, globals.NEW_IMMEDIATE_TO_SORT[1], "immediate_to_sort_tracks")
-        print("Finished updating IMMEDIATE TO-SORT")
+        # print("Finished updating IMMEDIATE TO-SORT")
         _, globals.LIBRARY_TO_SORT_TRACKS = get_updated_playlist(globals.LIBRARY_TO_SORT_TRACKS, globals.NEW_LIBRARY_TO_SORT[1], "library_to_sort_tracks")
-        print("Finished updating LIBRARY TO-SORT")
+        # print("Finished updating LIBRARY TO-SORT")
 
         update_playlist_folder(globals.GENRES, globals.NEW_GENRES, "genre_id_to_tracks")
-        print("Finished updating Genres")
+        # print("Finished updating Genres")
         update_playlist_folder(globals.ARCHIVED_MIXTAPES, globals.NEW_ARCHIVED_MIXTAPES, "archived_mixtape_id_to_tracks")
-        print("Finished updating Archived Mixtapes")
+        # print("Finished updating Archived Mixtapes")
         update_playlist_folder(globals.ARCHIVED_RECORDS, globals.NEW_ARCHIVED_RECORDS, "archived_record_id_to_tracks")
-        print("Finished updating Archived Records")
+        # print("Finished updating Archived Records")
 
         print("Sleeping to regulate API calls...")
         sleep(globals.API_SLEEP_TIME)

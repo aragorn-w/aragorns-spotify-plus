@@ -1,8 +1,10 @@
+import sys
+sys.dont_write_bytecode = True
 from difflib import get_close_matches
 
-from utils.library_loader import *
-
 import typer
+
+from utils.library_loader import *
 
 
 spotify_plus = typer.Typer()
@@ -23,7 +25,7 @@ def url_which(track_url: str):
     contianing_archived_records = []
 
     for playlist_id in containing_playlists_id_to_name:
-        response = globals.SPOTIFY_API.playlist(f"spotify:playlist:{playlist_id}", fields="name")
+        response = globals.next_api().playlist(f"spotify:playlist:{playlist_id}", fields="name")
         globals.assert_api_limit(response)
         playlist_name = response["name"]
         if playlist_name.startswith("[1]"):
