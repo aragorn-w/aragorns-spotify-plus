@@ -3,7 +3,7 @@
 from utils.library_loader import *
 
 import json
-from time import time
+from time import sleep, time
 
 
 # Helper resources for updating the playlist library JSONs
@@ -58,7 +58,11 @@ def update_playlist_folder(playlist_id_to_tracks, new_playlist_id_to_tracks, pla
 if __name__ == '__main__':
     # Main loop for updating the saved playlist library JSONs
 
+    running_times = []
+
     while True:
+        total_start = time()
+
         print("\nNew library-update iteration...")
 
         print("Started getting new libraries...")
@@ -77,3 +81,15 @@ if __name__ == '__main__':
         print("Finished updating Archived Mixtapes")
         update_playlist_folder(globals.ARCHIVED_RECORDS, globals.NEW_ARCHIVED_RECORDS, "archived_record_id_to_tracks")
         print("Finished updating Archived Records")
+
+        print("Sleeping to regulate API calls...")
+        sleep(globals.API_SLEEP_TIME)
+        print(f"Finished sleeping ({globals.API_SLEEP_TIME}s)")
+
+        total_iteration_time = time() - total_start
+        running_times.append(total_iteration_time)
+        print(f"LOOP ITERATION FINISHED ({round(total_iteration_time, 3)}s)")
+        if len(running_times) == 6:
+            running_times.pop(0)
+        if len(running_times) == 5:
+            print(f"~~~5-point moving median ({round(running_times[2], 3)}s)~~~")

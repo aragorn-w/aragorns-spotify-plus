@@ -23,7 +23,9 @@ def url_which(track_url: str):
     contianing_archived_records = []
 
     for playlist_id in containing_playlists_id_to_name:
-        playlist_name = globals.SPOTIFY_API.playlist(f"spotify:playlist:{playlist_id}", fields="name")["name"]
+        response = globals.SPOTIFY_API.playlist(f"spotify:playlist:{playlist_id}", fields="name")
+        globals.assert_api_limit(response)
+        playlist_name = response["name"]
         if playlist_name.startswith("[1]"):
             containing_immediate_to_sort = playlist_name
         elif playlist_name.startswith("[2]"):
