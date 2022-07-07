@@ -71,12 +71,10 @@ def get_libraries():
                 thread.start()
                 threads.append(thread)
             elif playlist['name'].startswith('[1]'):
-                NEW_IMMEDIATE_TO_SORT[0] = id
                 thread = Thread(target=store_simplified_tracks, args=(NEW_IMMEDIATE_TO_SORT, 1, id))
                 thread.start()
                 threads.append(thread)
             elif playlist['name'].startswith('[2]'):
-                NEW_LIBRARY_TO_SORT[0] = id 
                 thread = Thread(target=store_simplified_tracks, args=(NEW_LIBRARY_TO_SORT, 1, id))
                 thread.start()
                 threads.append(thread)
