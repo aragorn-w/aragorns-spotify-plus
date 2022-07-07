@@ -70,7 +70,7 @@ if __name__ == '__main__':
         print("Started getting new libraries...")
         start = time()
         globals.get_libraries()
-        print(f"Finished getting new libraries ({round(time() - start, 3)}s)")
+        print(f"Got new libraries ({round(time() - start, 3)}s)")
 
         _, globals.IMMEDIATE_TO_SORT_TRACKS = get_updated_playlist(globals.IMMEDIATE_TO_SORT_TRACKS, globals.NEW_IMMEDIATE_TO_SORT[1], "immediate_to_sort_tracks")
         # print("Finished updating IMMEDIATE TO-SORT")
@@ -84,13 +84,9 @@ if __name__ == '__main__':
         update_playlist_folder(globals.ARCHIVED_RECORDS, globals.NEW_ARCHIVED_RECORDS, "archived_record_id_to_tracks")
         # print("Finished updating Archived Records")
 
-        print("Sleeping to regulate API calls...")
-        sleep(globals.API_SLEEP_TIME)
-        print(f"Finished sleeping ({globals.API_SLEEP_TIME}s)")
-
         total_iteration_time = time() - total_start
         running_times.append(total_iteration_time)
-        print(f"LOOP ITERATION FINISHED ({round(total_iteration_time, 3)}s)")
+        print(f"Finished loop iteration ({round(total_iteration_time, 3)}s)")
         if len(running_times) == 6:
             running_times.pop(0)
         if len(running_times) == 5:

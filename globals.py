@@ -12,14 +12,12 @@ from spotipy.oauth2 import SpotifyClientCredentials
 
 # Establish Spotify client credentials
 
-NUM_CLIENTS = 4
+NUM_CLIENTS = 6
 API_POOL = cycle([spotipy.Spotify(client_credentials_manager=SpotifyClientCredentials(client_id=getenv(f"SPOTIFY_CLIENT_ID_{client_num}"), client_secret=getenv(f"SPOTIFY_CLIENT_SECRET_{client_num}"))) for client_num in range(1, NUM_CLIENTS, 1)])
 def next_api():
     return next(API_POOL)
 
 LIBRARY_SPOTIFY_ACCOUNT_ID = getenv('SPOTIFY_PLUS_SECONDARY_ACCOUNT_USER_ID')
-
-API_SLEEP_TIME = 0
 
 def assert_api_limit(response_dict):
     try:
