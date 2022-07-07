@@ -16,9 +16,7 @@ As of June 19th, 2022, I am a CS-interested high school junior with a beginner/i
 * "LIBRARY TO-SORT" playlist that is the same as the IMMEDIATE TO-SORT playlist that just has lower-priority songs
 
 ## Application Structure
-The structure of this perpetually-running personal "Spotify-plus" python project is pretty simple: A service manager script (which is running continuously on an old Macbook Pro 15" of mine) runs and manages each service (a single, modular Spotify-plus feature I want) and its respective thread.
-
-Ideally, I will be able to create my own command-line interface for giving inputs to the service manager (like for checking what personal playlists a song associated with an inputted Spotify song-link is within, if any).
+The structure of this perpetually-running personal "Spotify-plus" python project is pretty simple: A Typer CLI script that shares resources with a multi-threaded background daemon process (which is running continuously on an old Macbook Pro 15" of mine) that does things like fetch updates from my Spotify playlists.
 
 ### **\[1\]**
 > To stop the Spotify algorithm from learning song recommendations from the songs (that I somewhat like in the moment) I add to sub-genre playlists, I will be storing my genre-playlists and archived mixtape-playlists on a second Spotify account (attached with the duo premium plan to my main account for both this and also because Tesla sucks at Telsa-iPhone Spotify relations) that I'll be accessing on my desktop via a virtual machine

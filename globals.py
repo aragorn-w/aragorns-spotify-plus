@@ -1,6 +1,6 @@
 from os import getenv
 import json
-import threading
+from threading import Thread
 
 import spotipy
 from spotipy.oauth2 import SpotifyClientCredentials
@@ -68,6 +68,9 @@ def get_simplified_tracks(playlist_id):
     
     return simplified_tracks
 
+def store_simplified_tracks(library, key, playlist_id):
+    library[key] = get_simplified_tracks(playlist_id)
+
 # OPTIMIZE: Figure out how the hell to speed this up (ex. multithreading, multiple clients, etc)
 def get_libraries():
     global SPOTIFY_API, LIBRARY_SPOTIFY_ACCOUNT_ID
@@ -79,21 +82,38 @@ def get_libraries():
     NEW_ARCHIVED_MIXTAPES = {}
     NEW_ARCHIVED_RECORDS = {}
 
+    threads = []
+
     current_page = SPOTIFY_API.user_playlists(LIBRARY_SPOTIFY_ACCOUNT_ID)
     while current_page:
         for playlist in current_page['items']:
             id = playlist['id']
 
             if playlist['name'].startswith('[G]'):
-                NEW_GENRES[id] = get_simplified_tracks(id)
+                thread = Thread(target=store_simplified_tracks, args=(NEW_GENRES, id, id))
+                thread.start()
+                threads.append(thread)
+                # NEW_GENRES[id] = get_simplified_tracks(id)
             elif playlist['name'].startswith('[AM]'):
-                NEW_ARCHIVED_MIXTAPES[id] = get_simplified_tracks(id)
+                thread = Thread(target=store_simplified_tracks, args=(NEW_ARCHIVED_MIXTAPES, id, id))
+                thread.start()
+                threads.append(thread)
+                # NEW_ARCHIVED_MIXTAPES[id] = get_simplified_tracks(id)
             elif playlist['name'].startswith('[AR]'):
-                NEW_ARCHIVED_RECORDS[id] = get_simplified_tracks(id)
+                thread = Thread(target=store_simplified_tracks, args=(NEW_ARCHIVED_RECORDS, id, id))
+                thread.start()
+                threads.append(thread)
+                # NEW_ARCHIVED_RECORDS[id] = get_simplified_tracks(id)
             elif playlist['name'].startswith('[1]'):
+                thread = Thread(target=store_simplified_tracks, args=(NEW_IMMEDIATE_TO_SORT, 1, id))
+                thread.start()
+                threads.append(thread)
                 NEW_IMMEDIATE_TO_SORT[0] = id
-                NEW_IMMEDIATE_TO_SORT[1] = get_simplified_tracks(id)
+                # NEW_IMMEDIATE_TO_SORT[1] = get_simplified_tracks(id)
             elif playlist['name'].startswith('[2]'):
+                thread = Thread(target=store_simplified_tracks, args=(NEW_LIBRARY_TO_SORT, 1, id))
+                thread.start()
+                threads.append(thread)
                 NEW_LIBRARY_TO_SORT[0] = id 
                 NEW_LIBRARY_TO_SORT[1] = get_simplified_tracks(id)
 
@@ -101,3 +121,6 @@ def get_libraries():
             current_page = SPOTIFY_API.next(current_page)
         else:
             current_page = None
+    
+    for thread in threads:
+        thread.join()
