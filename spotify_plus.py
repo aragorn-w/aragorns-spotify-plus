@@ -4,6 +4,7 @@ from difflib import get_close_matches
 
 import typer
 
+from globals import *
 from utils.library_loader import *
 
 
@@ -25,8 +26,8 @@ def url_which(track_url: str):
     contianing_archived_records = []
 
     for playlist_id in containing_playlists_id_to_name:
-        response = globals.next_api().playlist(f"spotify:playlist:{playlist_id}", fields="name")
-        globals.assert_api_limit(response)
+        response = NEXT_API().playlist(f"spotify:playlist:{playlist_id}", fields="name")
+        ASSERT_API_LIMIT(response)
         playlist_name = response["name"]
         if playlist_name.startswith("[1]"):
             containing_immediate_to_sort = playlist_name

@@ -5,6 +5,7 @@ sys.dont_write_bytecode = True
 import json
 from time import time
 
+from globals import *
 from utils.library_loader import *
 
 
@@ -72,16 +73,16 @@ if __name__ == '__main__':
         get_libraries()
         print(f"Got new libraries ({round(time() - start, 3)}s)")
 
-        _, globals.IMMEDIATE_TO_SORT_TRACKS = get_updated_playlist(globals.IMMEDIATE_TO_SORT_TRACKS, globals.NEW_IMMEDIATE_TO_SORT[1], "immediate_to_sort_tracks")
+        _, IMMEDIATE_TO_SORT_TRACKS = get_updated_playlist(IMMEDIATE_TO_SORT_TRACKS, NEW_IMMEDIATE_TO_SORT[1], "immediate_to_sort_tracks")
         # print("Finished updating IMMEDIATE TO-SORT")
-        _, globals.LIBRARY_TO_SORT_TRACKS = get_updated_playlist(globals.LIBRARY_TO_SORT_TRACKS, globals.NEW_LIBRARY_TO_SORT[1], "library_to_sort_tracks")
+        _, LIBRARY_TO_SORT_TRACKS = get_updated_playlist(LIBRARY_TO_SORT_TRACKS, NEW_LIBRARY_TO_SORT[1], "library_to_sort_tracks")
         # print("Finished updating LIBRARY TO-SORT")
 
-        update_playlist_folder(globals.GENRES, globals.NEW_GENRES, "genre_id_to_tracks")
+        update_playlist_folder(GENRES, NEW_GENRES, "genre_id_to_tracks")
         # print("Finished updating Genres")
-        update_playlist_folder(globals.ARCHIVED_MIXTAPES, globals.NEW_ARCHIVED_MIXTAPES, "archived_mixtape_id_to_tracks")
+        update_playlist_folder(ARCHIVED_MIXTAPES, NEW_ARCHIVED_MIXTAPES, "archived_mixtape_id_to_tracks")
         # print("Finished updating Archived Mixtapes")
-        update_playlist_folder(globals.ARCHIVED_RECORDS, globals.NEW_ARCHIVED_RECORDS, "archived_record_id_to_tracks")
+        update_playlist_folder(ARCHIVED_RECORDS, NEW_ARCHIVED_RECORDS, "archived_record_id_to_tracks")
         # print("Finished updating Archived Records")
 
         total_iteration_time = time() - total_start
