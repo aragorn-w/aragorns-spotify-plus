@@ -2,15 +2,15 @@ import sys
 sys.dont_write_bytecode = True
 from threading import Thread
 
-from globals import *
+import globals
 
 
 # Each track is a dict with is_local, ID, and name
 def get_simplified_tracks(playlist_id):
     simplified_tracks = []
 
-    current_page = NEXT_API().playlist_items(f'spotify:playlist:{playlist_id}', fields='items.track.id,items.track.is_local,items.track.name,next')
-    ASSERT_API_LIMIT(current_page)
+    current_page = globals.NEXT_API().playlist_items(f'spotify:playlist:{playlist_id}', fields='items.track.id,items.track.is_local,items.track.name,next')
+    globals.ASSERT_API_LIMIT(current_page)
 
     while current_page:
         for item in current_page['items']:
@@ -29,8 +29,8 @@ def get_simplified_tracks(playlist_id):
             simplified_tracks.append(new_track)
 
         if current_page['next']:
-            current_page = NEXT_API().next(current_page)
-            ASSERT_API_LIMIT(current_page)
+            current_page = globals.NEXT_API().next(current_page)
+            globals.ASSERT_API_LIMIT(current_page)
             
         else:
             current_page = None
@@ -41,47 +41,47 @@ def store_simplified_tracks(library, key, playlist_id):
     library[key] = get_simplified_tracks(playlist_id)
 
 def get_libraries():
-    global LIBRARY_SPOTIFY_ACCOUNT_ID
+    # global LIBRARY_SPOTIFY_ACCOUNT_ID
     
-    global NEW_IMMEDIATE_TO_SORT, NEW_LIBRARY_TO_SORT, NEW_GENRES, NEW_ARCHIVED_MIXTAPES, NEW_ARCHIVED_RECORDS
+    # global NEW_IMMEDIATE_TO_SORT, NEW_LIBRARY_TO_SORT, NEW_GENRES, NEW_ARCHIVED_MIXTAPES, NEW_ARCHIVED_RECORDS
 
     # Reset playlist folders so that library_tracks_updater can detect deleted playlists
-    NEW_GENRES = {}
-    NEW_ARCHIVED_MIXTAPES = {}
-    NEW_ARCHIVED_RECORDS = {}
+    globals.NEW_GENRES = {}
+    globals.NEW_ARCHIVED_MIXTAPES = {}
+    globals.NEW_ARCHIVED_RECORDS = {}
 
     threads = []
 
-    current_page = NEXT_API().user_playlists(LIBRARY_SPOTIFY_ACCOUNT_ID)
-    ASSERT_API_LIMIT(current_page)
+    current_page = globals.NEXT_API().user_playlists(globals.LIBRARY_SPOTIFY_ACCOUNT_ID)
+    globals.ASSERT_API_LIMIT(current_page)
     while current_page:
         for playlist in current_page['items']:
             id = playlist['id']
 
             if playlist['name'].startswith('[G]'):
-                thread = Thread(target=store_simplified_tracks, args=(NEW_GENRES, id, id))
+                thread = Thread(target=store_simplified_tracks, args=(globals.NEW_GENRES, id, id))
                 thread.start()
                 threads.append(thread)
             elif playlist['name'].startswith('[AM]'):
-                thread = Thread(target=store_simplified_tracks, args=(NEW_ARCHIVED_MIXTAPES, id, id))
+                thread = Thread(target=store_simplified_tracks, args=(globals.NEW_ARCHIVED_MIXTAPES, id, id))
                 thread.start()
                 threads.append(thread)
             elif playlist['name'].startswith('[AR]'):
-                thread = Thread(target=store_simplified_tracks, args=(NEW_ARCHIVED_RECORDS, id, id))
+                thread = Thread(target=store_simplified_tracks, args=(globals.NEW_ARCHIVED_RECORDS, id, id))
                 thread.start()
                 threads.append(thread)
             elif playlist['name'].startswith('[1]'):
-                thread = Thread(target=store_simplified_tracks, args=(NEW_IMMEDIATE_TO_SORT, 1, id))
+                thread = Thread(target=store_simplified_tracks, args=(globals.NEW_IMMEDIATE_TO_SORT, 1, id))
                 thread.start()
                 threads.append(thread)
             elif playlist['name'].startswith('[2]'):
-                thread = Thread(target=store_simplified_tracks, args=(NEW_LIBRARY_TO_SORT, 1, id))
+                thread = Thread(target=store_simplified_tracks, args=(globals.NEW_LIBRARY_TO_SORT, 1, id))
                 thread.start()
                 threads.append(thread)
 
         if current_page['next']:
-            current_page = NEXT_API().next(current_page)
-            ASSERT_API_LIMIT(current_page)
+            current_page = globals.NEXT_API().next(current_page)
+            globals.ASSERT_API_LIMIT(current_page)
         else:
             current_page = None
     
@@ -89,18 +89,18 @@ def get_libraries():
         thread.join()
 
 def load_all_playlist_id_to_tracks():
-    global IMMEDIATE_TO_SORT_TRACKS, LIBRARY_SPOTIFY_ACCOUNT_ID, GENRES, ARCHIVED_MIXTAPES, ARCHIVED_RECORDS
+    # global IMMEDIATE_TO_SORT_TRACKS, LIBRARY_SPOTIFY_ACCOUNT_ID, GENRES, ARCHIVED_MIXTAPES, ARCHIVED_RECORDS
 
-    global NEW_IMMEDIATE_TO_SORT, NEW_LIBRARY_TO_SORT
+    # global NEW_IMMEDIATE_TO_SORT, NEW_LIBRARY_TO_SORT
 
     all_playlist_id_to_tracks = {}
     
-    all_playlist_id_to_tracks[NEW_IMMEDIATE_TO_SORT[0]] = IMMEDIATE_TO_SORT_TRACKS
-    all_playlist_id_to_tracks[NEW_LIBRARY_TO_SORT[0]] = LIBRARY_TO_SORT_TRACKS
+    all_playlist_id_to_tracks[globals.NEW_IMMEDIATE_TO_SORT[0]] = globals.IMMEDIATE_TO_SORT_TRACKS
+    all_playlist_id_to_tracks[globals.NEW_LIBRARY_TO_SORT[0]] = globals.LIBRARY_TO_SORT_TRACKS
 
-    all_playlist_id_to_tracks.update(GENRES)
-    all_playlist_id_to_tracks.update(ARCHIVED_MIXTAPES)
-    all_playlist_id_to_tracks.update(ARCHIVED_RECORDS)
+    all_playlist_id_to_tracks.update(globals.GENRES)
+    all_playlist_id_to_tracks.update(globals.ARCHIVED_MIXTAPES)
+    all_playlist_id_to_tracks.update(globals.ARCHIVED_RECORDS)
 
     return all_playlist_id_to_tracks
 
