@@ -2,16 +2,11 @@ import sys
 sys.dont_write_bytecode = True
 from difflib import get_close_matches
 
-import typer
-
-from globals import *
+import globals
 from utils.library_loader import *
 
 
-spotify_plus = typer.Typer()
-
 # Fetches the secondary-account playlists a given song link is contained within
-@spotify_plus.command()
 def url_which(track_url: str):
     track_id = track_url[31:53]
     containing_playlists_id_to_name = []
@@ -26,8 +21,8 @@ def url_which(track_url: str):
     contianing_archived_records = []
 
     for playlist_id in containing_playlists_id_to_name:
-        response = NEXT_API().playlist(f"spotify:playlist:{playlist_id}", fields="name")
-        ASSERT_API_LIMIT(response)
+        response = globals.NEXT_API().playlist(f"spotify:playlist:{playlist_id}", fields="name")
+        globals.ASSERT_API_LIMIT(response)
         playlist_name = response["name"]
         if playlist_name.startswith("[1]"):
             containing_immediate_to_sort = playlist_name
@@ -40,27 +35,28 @@ def url_which(track_url: str):
         elif playlist_name.startswith("[AR]"):
             contianing_archived_records.append(playlist_name)
 
+    out_strings = []
     if containing_immediate_to_sort is not None:
-        typer.echo(f"{containing_immediate_to_sort}\n")
+        out_strings.append(f"{containing_immediate_to_sort}\n\n")
     if containing_library_to_sort is not None:
-        typer.echo(f"{containing_library_to_sort}\n")
+        out_strings.append(f"{containing_library_to_sort}\n\n")
     if containing_genres:
-        typer.echo("GENRES")
+        out_strings.append("GENRES\n")
         for genre in containing_genres:
-            typer.echo(f"    {genre}")
-        typer.echo()
+            out_strings.append(f"    {genre}\n")
+        out_strings.append("\n")
     if containing_archived_mixtapes:
-        typer.echo("ARCHIVED MIXTAPES")
+        out_strings.append("ARCHIVED MIXTAPES\n")
         for archived_mixtape in containing_archived_mixtapes:
-            typer.echo(f"    {archived_mixtape}")
-        typer.echo()
+            out_strings.append(f"    {archived_mixtape}\n")
+        out_strings.append("\n")
     if contianing_archived_records:
-        typer.echo("ARCHIVED RECORDS")
+        out_strings.append("ARCHIVED RECORDS\n")
         for archived_record in contianing_archived_records:
-            typer.echo(f"    {archived_record}")
-        typer.echo()
+            out_strings.append(f"    {archived_record}\n")
+        out_strings.append("\n")
+    return "".join(out_strings)
 
-@spotify_plus.command()
 def song_which(song_name: str):
     NUM_CLOSE_MATCHES = 5
     CUTOFF = 0.6
@@ -110,7 +106,3 @@ def song_which(song_name: str):
     #     for archived_record in contianing_archived_records:
     #         typer.echo(f"    {archived_record}")
     #     typer.echo()
-
-
-if __name__ == "__main__":
-    spotify_plus()
