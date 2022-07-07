@@ -15,8 +15,6 @@ API_POOL = cycle([spotipy.Spotify(client_credentials_manager=SpotifyClientCreden
 
 def NEXT_API():
     return next(API_POOL)
-NEXT_API()
-NEXT_API()
 
 LIBRARY_SPOTIFY_ACCOUNT_ID = getenv('SPOTIFY_PLUS_SECONDARY_ACCOUNT_USER_ID')
 

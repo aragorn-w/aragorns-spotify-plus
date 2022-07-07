@@ -41,11 +41,6 @@ def store_simplified_tracks(library, key, playlist_id):
     library[key] = get_simplified_tracks(playlist_id)
 
 def get_libraries():
-    # global LIBRARY_SPOTIFY_ACCOUNT_ID
-    
-    # global NEW_IMMEDIATE_TO_SORT, NEW_LIBRARY_TO_SORT, NEW_GENRES, NEW_ARCHIVED_MIXTAPES, NEW_ARCHIVED_RECORDS
-
-    # Reset playlist folders so that library_tracks_updater can detect deleted playlists
     globals.NEW_GENRES = {}
     globals.NEW_ARCHIVED_MIXTAPES = {}
     globals.NEW_ARCHIVED_RECORDS = {}
@@ -89,10 +84,6 @@ def get_libraries():
         thread.join()
 
 def load_all_playlist_id_to_tracks():
-    # global IMMEDIATE_TO_SORT_TRACKS, LIBRARY_SPOTIFY_ACCOUNT_ID, GENRES, ARCHIVED_MIXTAPES, ARCHIVED_RECORDS
-
-    # global NEW_IMMEDIATE_TO_SORT, NEW_LIBRARY_TO_SORT
-
     all_playlist_id_to_tracks = {}
     
     all_playlist_id_to_tracks[globals.NEW_IMMEDIATE_TO_SORT[0]] = globals.IMMEDIATE_TO_SORT_TRACKS
