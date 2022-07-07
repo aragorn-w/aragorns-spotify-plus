@@ -87,7 +87,6 @@ def get_simplified_tracks(playlist_id):
 def store_simplified_tracks(library, key, playlist_id):
     library[key] = get_simplified_tracks(playlist_id)
 
-# OPTIMIZE: Figure out how the hell to speed this up (ex. multithreading, multiple clients, etc)
 def get_libraries():
     global LIBRARY_SPOTIFY_ACCOUNT_ID
     

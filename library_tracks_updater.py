@@ -3,7 +3,7 @@
 import sys
 sys.dont_write_bytecode = True
 import json
-from time import sleep, time
+from time import time
 
 from utils.library_loader import *
 
