@@ -1,5 +1,3 @@
-# Background daemon process for continuously updating the saved JSONs of all the secondary Spotify account's playlists
-
 import sys
 sys.dont_write_bytecode = True
 import json
@@ -57,8 +55,7 @@ def update_playlist_folder(playlist_id_to_tracks, new_playlist_id_to_tracks, pla
         return True
     return False
 
-
-if __name__ == '__main__':
+def update_library_tracks():
     # Main loop for updating the saved playlist library JSONs
 
     running_times = []
