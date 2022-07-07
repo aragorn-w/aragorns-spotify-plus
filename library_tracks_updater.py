@@ -69,7 +69,7 @@ if __name__ == '__main__':
 
         print("Started getting new libraries...")
         start = time()
-        globals.get_libraries()
+        get_libraries()
         print(f"Got new libraries ({round(time() - start, 3)}s)")
 
         _, globals.IMMEDIATE_TO_SORT_TRACKS = get_updated_playlist(globals.IMMEDIATE_TO_SORT_TRACKS, globals.NEW_IMMEDIATE_TO_SORT[1], "immediate_to_sort_tracks")
