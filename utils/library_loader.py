@@ -91,14 +91,18 @@ def get_libraries():
         thread.join()
 
 def load_all_playlist_id_to_tracks():
+    global IMMEDIATE_TO_SORT_TRACKS, LIBRARY_SPOTIFY_ACCOUNT_ID, GENRES, ARCHIVED_MIXTAPES, ARCHIVED_RECORDS
+
+    global NEW_IMMEDIATE_TO_SORT, NEW_LIBRARY_TO_SORT
+
     all_playlist_id_to_tracks = {}
     
-    all_playlist_id_to_tracks[globals.NEW_IMMEDIATE_TO_SORT[0]] = globals.IMMEDIATE_TO_SORT_TRACKS
-    all_playlist_id_to_tracks[globals.NEW_LIBRARY_TO_SORT[0]] = globals.LIBRARY_TO_SORT_TRACKS
+    all_playlist_id_to_tracks[NEW_IMMEDIATE_TO_SORT[0]] = IMMEDIATE_TO_SORT_TRACKS
+    all_playlist_id_to_tracks[NEW_LIBRARY_TO_SORT[0]] = LIBRARY_TO_SORT_TRACKS
 
-    all_playlist_id_to_tracks.update(globals.GENRES)
-    all_playlist_id_to_tracks.update(globals.ARCHIVED_MIXTAPES)
-    all_playlist_id_to_tracks.update(globals.ARCHIVED_RECORDS)
+    all_playlist_id_to_tracks.update(GENRES)
+    all_playlist_id_to_tracks.update(ARCHIVED_MIXTAPES)
+    all_playlist_id_to_tracks.update(ARCHIVED_RECORDS)
 
     return all_playlist_id_to_tracks
 
