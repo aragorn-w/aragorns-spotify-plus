@@ -94,4 +94,4 @@ if __name__ == '__main__':
         if len(running_times) == 6:
             running_times.pop(0)
         if len(running_times) == 5:
-            print(f"~~~5-point moving median ({round(running_times[2], 3)}s)~~~")
+            print(f"~~~5-point moving average ({round(sum(running_times)/5, 3)}s)~~~")
