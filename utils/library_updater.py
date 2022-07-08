@@ -1,10 +1,13 @@
 import sys
 sys.dont_write_bytecode = True
 import json
-from time import time
+from time import time, sleep
 
 import globals
-from utils.library_loader import *
+from utils.library_getter import *
+
+
+LIBRARY_UPDATE_PAUSE_TIME = 6
 
 
 # Helper resources for updating the playlist library JSONs
@@ -55,8 +58,10 @@ def update_playlist_folder(playlist_id_to_tracks, new_playlist_id_to_tracks, pla
         return True
     return False
 
-def update_library_tracks(printout=False):
+def update_library_tracks_loop(printout=False):
     # Main loop for updating the saved playlist library JSONs
+
+    global LIBRARY_UPDATE_PAUSE_TIME, GET_LIBRARY_TIMEOUT
 
     running_times = []
 
@@ -67,7 +72,9 @@ def update_library_tracks(printout=False):
 
         if printout: print("Started getting new libraries...")
         start = time()
-        get_libraries()
+        
+        if get_libraries(timeout=GET_LIBRARY_TIMEOUT) == "TIMED OUT":
+            raise Exception("!!! Timed out getting new libraries !!!")
         if printout: print(f"Got new libraries ({round(time() - start, 3)}s)")
 
         _, globals.IMMEDIATE_TO_SORT_TRACKS = get_updated_playlist(globals.IMMEDIATE_TO_SORT_TRACKS, globals.NEW_IMMEDIATE_TO_SORT[1], "immediate_to_sort_tracks", printout)
@@ -81,6 +88,9 @@ def update_library_tracks(printout=False):
         # if printout: print("Finished updating Archived Mixtapes")
         update_playlist_folder(globals.ARCHIVED_RECORDS, globals.NEW_ARCHIVED_RECORDS, "archived_record_id_to_tracks", printout)
         # if printout: print("Finished updating Archived Records")
+
+        if printout: print(f"Running manual API sleep for ({LIBRARY_UPDATE_PAUSE_TIME}s)...")
+        sleep(LIBRARY_UPDATE_PAUSE_TIME)
 
         total_iteration_time = time() - total_start
         running_times.append(total_iteration_time)

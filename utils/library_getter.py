@@ -3,8 +3,12 @@ sys.dont_write_bytecode = True
 from threading import Thread
 
 from spotipy import SpotifyException
+from stopit import threading_timeoutable
 
 import globals
+
+
+GET_LIBRARY_TIMEOUT = 16
 
 
 # Each track is a dict with is_local, ID, and name
@@ -46,6 +50,7 @@ def get_simplified_tracks(playlist_id):
 def store_simplified_tracks(library, key, playlist_id):
     library[key] = get_simplified_tracks(playlist_id)
 
+@threading_timeoutable("TIMED OUT")
 def get_libraries():
     globals.NEW_GENRES = {}
     globals.NEW_ARCHIVED_MIXTAPES = {}
@@ -57,28 +62,34 @@ def get_libraries():
         current_page = globals.SPOTIFY_API.user_playlists(globals.LIBRARY_SPOTIFY_ACCOUNT_ID)
     except SpotifyException as e:
         globals.HANDLE_SPOTIFY_EXCEPTION(e)
+    
     while current_page:
         for playlist in current_page['items']:
             id = playlist['id']
 
             if playlist['name'].startswith('[G]'):
                 thread = Thread(target=store_simplified_tracks, args=(globals.NEW_GENRES, id, id))
+                thread.daemon = True
                 thread.start()
                 threads.append(thread)
             elif playlist['name'].startswith('[AM]'):
                 thread = Thread(target=store_simplified_tracks, args=(globals.NEW_ARCHIVED_MIXTAPES, id, id))
+                thread.daemon = True
                 thread.start()
                 threads.append(thread)
             elif playlist['name'].startswith('[AR]'):
                 thread = Thread(target=store_simplified_tracks, args=(globals.NEW_ARCHIVED_RECORDS, id, id))
+                thread.daemon = True
                 thread.start()
                 threads.append(thread)
             elif playlist['name'].startswith('[1]'):
                 thread = Thread(target=store_simplified_tracks, args=(globals.NEW_IMMEDIATE_TO_SORT, 1, id))
+                thread.daemon = True
                 thread.start()
                 threads.append(thread)
             elif playlist['name'].startswith('[2]'):
                 thread = Thread(target=store_simplified_tracks, args=(globals.NEW_LIBRARY_TO_SORT, 1, id))
+                thread.daemon = True
                 thread.start()
                 threads.append(thread)
 

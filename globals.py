@@ -9,7 +9,7 @@ import spotipy
 from spotipy.oauth2 import SpotifyClientCredentials
 
 
-# Establish Spotify client credentials
+# Spotify API stuff
 
 CLIENT_ID = getenv(f"SPOTIFY_CLIENT_ID")
 print(f"CLIENT_ID = {CLIENT_ID}")
@@ -23,7 +23,12 @@ def HANDLE_SPOTIFY_EXCEPTION(spotify_exception: SpotifyException):
     assert 1 == 0
 
 
-# Load the saved libraries
+# Inter-process socket stuff
+
+ADDRESS = ("localhost", int(getenv("SPOTIFY_PLUS_PORT")))
+
+
+# Saved library stuff
 
 def LOAD_LIBRARY(library_name):
     library = None
@@ -38,11 +43,14 @@ GENRES = LOAD_LIBRARY("genre_id_to_tracks")
 ARCHIVED_MIXTAPES = LOAD_LIBRARY("archived_mixtape_id_to_tracks")
 ARCHIVED_RECORDS = LOAD_LIBRARY("archived_record_id_to_tracks")
 
+PLAYLIST_ID_TO_NAME = LOAD_LIBRARY("playlist_id_to_name")
 
-# Initialize the new libraries (but don't fetch)
+
+# New library stuff
 
 NEW_IMMEDIATE_TO_SORT = ["06sD1Pm4x5hLo2gq9d8G6G", None]
 NEW_LIBRARY_TO_SORT = ["2pdYtdLZcMLG6kAm7mRb4M", None]
+
 NEW_GENRES = {}
 NEW_ARCHIVED_MIXTAPES = {}
 NEW_ARCHIVED_RECORDS = {}

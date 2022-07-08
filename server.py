@@ -1,27 +1,36 @@
 import sys
 sys.dont_write_bytecode = True
+
+from typing import Callable
 from threading import Thread
 from multiprocessing.connection import Listener
 
-from library_tracks_updater import update_library_tracks
+import globals
+from utils.library_updater import update_library_tracks_loop
 from commands.which_playlist import *
 
 
-if __name__ == "__main__":
-    address = ("localhost", 6163)
-    listener = Listener(address, authkey=b"my secret password is this")
+CLIENT = None
 
-    library_tracks_updater = Thread(target=update_library_tracks, args=(True,))
-    library_tracks_updater.start()
+def send_client(command: Callable, *args, **kwargs):
+    global CLIENT
+    print(f"Sending output of \'{command.__name__}\' command to client...")
+    CLIENT.send(command(*args, **kwargs))
+    print(f"Output of \'{command.__name__}\' command sent to client")
 
-    while False:
+def server_listener_loop():
+    global CLIENT
+
+    listener = Listener(globals.ADDRESS, authkey=b"my secret password is this")
+
+    while True:
         print("Waiting on connection...")
-        client = listener.accept()
-        print(f"Connection accepted from {listener.last_accepted}")
+        CLIENT = listener.accept()
+        print(f"Connection accepted from {listener.last_accepted}")    
 
         message = None
         try:
-            message = client.recv()
+            message = CLIENT.recv()
         except EOFError:
             print(f"Connection from {listener.last_accepted} closed\n")
             continue
@@ -31,6 +40,20 @@ if __name__ == "__main__":
 
         if command == "url-which":
             track_url = arguments[0]
-            print("Sending output of url-which command to client...")
-            client.send(url_which(track_url))
-            print("Output of url-which command sent to client")
+            send_client(url_which, track_url)
+        elif command == "name-which":
+            track_name = arguments[0]
+            send_client(name_which, track_name)
+
+
+if __name__ == "__main__":
+    library_tracks_updater_thread = Thread(target=update_library_tracks_loop, args=(False,))
+    library_tracks_updater_thread.daemon = True
+    library_tracks_updater_thread.start()
+
+    server_listener_thread = Thread(target=server_listener_loop)
+    server_listener_thread.daemon = True
+    server_listener_thread.start()
+
+    while True:
+        pass
