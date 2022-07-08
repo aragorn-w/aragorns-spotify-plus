@@ -12,7 +12,7 @@ LIBRARY_UPDATE_PAUSE_TIME = 6
 
 # Helper resources for updating the playlist library JSONs
 
-def get_updated_playlist(tracks, new_tracks, playlist_json_name=None, printout=False):
+def get_updated_playlist(tracks: list[dict], new_tracks: list[dict], playlist_json_name: str=None, printout: bool=False):
     if not playlists_are_equal(tracks, new_tracks):
         if playlist_json_name:
             with open(f"saved_libraries/{playlist_json_name}.json", "w", encoding="utf-8") as outFile:
@@ -21,7 +21,7 @@ def get_updated_playlist(tracks, new_tracks, playlist_json_name=None, printout=F
         return True, new_tracks
     return False, new_tracks
 
-def update_playlist_folder(playlist_id_to_tracks, new_playlist_id_to_tracks, playlist_folder_json_name, printout=False):
+def update_playlist_folder(playlist_id_to_tracks: dict[str, dict], new_playlist_id_to_tracks: dict[str, dict], playlist_folder_json_name: str, printout: bool=False):
     any_playlist_changed = False
 
     new_created_playlist_ids = set(new_playlist_id_to_tracks.keys())
@@ -58,7 +58,7 @@ def update_playlist_folder(playlist_id_to_tracks, new_playlist_id_to_tracks, pla
         return True
     return False
 
-def update_library_tracks_loop(printout=False):
+def update_library_tracks_loop(printout: bool=False):
     # Main loop for updating the saved playlist library JSONs
 
     global LIBRARY_UPDATE_PAUSE_TIME, GET_LIBRARY_TIMEOUT
@@ -73,8 +73,7 @@ def update_library_tracks_loop(printout=False):
         if printout: print("Started getting new libraries...")
         start = time()
         
-        if get_libraries(timeout=GET_LIBRARY_TIMEOUT) == "TIMED OUT":
-            raise Exception("!!! Timed out getting new libraries !!!")
+        get_libraries(timeout=GET_LIBRARY_TIMEOUT)
         if printout: print(f"Got new libraries ({round(time() - start, 3)}s)")
 
         _, globals.IMMEDIATE_TO_SORT_TRACKS = get_updated_playlist(globals.IMMEDIATE_TO_SORT_TRACKS, globals.NEW_IMMEDIATE_TO_SORT[1], "immediate_to_sort_tracks", printout)

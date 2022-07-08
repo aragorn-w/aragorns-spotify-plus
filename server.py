@@ -1,6 +1,5 @@
 import sys
 sys.dont_write_bytecode = True
-
 from typing import Callable
 from threading import Thread
 from multiprocessing.connection import Listener
@@ -47,7 +46,7 @@ def server_listener_loop():
 
 
 if __name__ == "__main__":
-    library_tracks_updater_thread = Thread(target=update_library_tracks_loop, args=(False,))
+    library_tracks_updater_thread = Thread(target=update_library_tracks_loop, kwargs={"printout": True})
     library_tracks_updater_thread.daemon = True
     library_tracks_updater_thread.start()
 

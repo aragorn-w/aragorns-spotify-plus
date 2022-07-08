@@ -1,10 +1,12 @@
 import sys
 sys.dont_write_bytecode = True
+from typing import Any
 from threading import Thread
 
 from spotipy import SpotifyException
 from stopit import threading_timeoutable
 
+from utils.timeout import raise_timeout
 import globals
 
 
@@ -12,7 +14,7 @@ GET_LIBRARY_TIMEOUT = 16
 
 
 # Each track is a dict with is_local, ID, and name
-def get_simplified_tracks(playlist_id):
+def get_simplified_tracks(playlist_id: str):
     simplified_tracks = []
 
     try:
@@ -47,9 +49,10 @@ def get_simplified_tracks(playlist_id):
     
     return simplified_tracks
 
-def store_simplified_tracks(library, key, playlist_id):
+def store_simplified_tracks(library: dict, key: Any, playlist_id: str):
     library[key] = get_simplified_tracks(playlist_id)
 
+@raise_timeout("!!! Timed out getting new libraries !!!")
 @threading_timeoutable("TIMED OUT")
 def get_libraries():
     globals.NEW_GENRES = {}
@@ -116,7 +119,7 @@ def load_all_playlist_id_to_tracks():
 
     return all_playlist_id_to_tracks
 
-def playlists_are_equal(playlist1, playlist2):
+def playlists_are_equal(playlist1: list[dict], playlist2: list[dict]):
     two_not_one = [track for track in playlist2 if track not in playlist1]
     one_not_two = [track for track in playlist1 if track not in playlist2]
     return two_not_one == [] and one_not_two == []

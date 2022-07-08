@@ -30,7 +30,7 @@ ADDRESS = ("localhost", int(getenv("SPOTIFY_PLUS_PORT")))
 
 # Saved library stuff
 
-def LOAD_LIBRARY(library_name):
+def LOAD_LIBRARY(library_name: str):
     library = None
     with open(f"saved_libraries/{library_name}.json", "r", encoding="utf-8") as file:
         library = json.load(file)
