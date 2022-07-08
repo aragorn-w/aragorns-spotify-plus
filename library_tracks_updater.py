@@ -9,16 +9,16 @@ from utils.library_loader import *
 
 # Helper resources for updating the playlist library JSONs
 
-def get_updated_playlist(tracks, new_tracks, playlist_json_name=None):
+def get_updated_playlist(tracks, new_tracks, playlist_json_name=None, printout=False):
     if not playlists_are_equal(tracks, new_tracks):
         if playlist_json_name:
             with open(f"saved_libraries/{playlist_json_name}.json", "w", encoding="utf-8") as outFile:
                 json.dump(new_tracks, outFile, ensure_ascii=False, indent=4)
-        print("    New added/deleted playlist track(s) detected!")
+        if printout: print("    New added/deleted playlist track(s) detected!")
         return True, new_tracks
     return False, new_tracks
 
-def update_playlist_folder(playlist_id_to_tracks, new_playlist_id_to_tracks, playlist_folder_json_name):
+def update_playlist_folder(playlist_id_to_tracks, new_playlist_id_to_tracks, playlist_folder_json_name, printout=False):
     any_playlist_changed = False
 
     new_created_playlist_ids = set(new_playlist_id_to_tracks.keys())
@@ -27,7 +27,7 @@ def update_playlist_folder(playlist_id_to_tracks, new_playlist_id_to_tracks, pla
     for playlist_id in playlist_id_to_tracks:
         # New library shows that playlist no longer exists
         if playlist_id not in new_playlist_id_to_tracks:
-            print("    New deleted playlist(s) detected!")
+            if printout: print("    New deleted playlist(s) detected!")
             new_deleted_playlist_ids.append(playlist_id)
             any_playlist_changed = True
             continue
@@ -44,7 +44,7 @@ def update_playlist_folder(playlist_id_to_tracks, new_playlist_id_to_tracks, pla
         playlist_id_to_tracks.pop(playlist_id)
 
     if new_created_playlist_ids:
-        print("    New created playlist(s) detected!")
+        if printout: print("    New created playlist(s) detected!")
         for playlist_id in new_created_playlist_ids:
             playlist_id_to_tracks[playlist_id] = new_playlist_id_to_tracks[playlist_id]
         any_playlist_changed = True
@@ -55,7 +55,7 @@ def update_playlist_folder(playlist_id_to_tracks, new_playlist_id_to_tracks, pla
         return True
     return False
 
-def update_library_tracks():
+def update_library_tracks(printout=False):
     # Main loop for updating the saved playlist library JSONs
 
     running_times = []
@@ -63,29 +63,29 @@ def update_library_tracks():
     while True:
         total_start = time()
 
-        print("\nNew library-update iteration...")
+        if printout: print("\nNew library-update iteration...")
 
-        print("Started getting new libraries...")
+        if printout: print("Started getting new libraries...")
         start = time()
         get_libraries()
-        print(f"Got new libraries ({round(time() - start, 3)}s)")
+        if printout: print(f"Got new libraries ({round(time() - start, 3)}s)")
 
-        _, globals.IMMEDIATE_TO_SORT_TRACKS = get_updated_playlist(globals.IMMEDIATE_TO_SORT_TRACKS, globals.NEW_IMMEDIATE_TO_SORT[1], "immediate_to_sort_tracks")
-        # print("Finished updating IMMEDIATE TO-SORT")
-        _, globals.LIBRARY_TO_SORT_TRACKS = get_updated_playlist(globals.LIBRARY_TO_SORT_TRACKS, globals.NEW_LIBRARY_TO_SORT[1], "library_to_sort_tracks")
-        # print("Finished updating LIBRARY TO-SORT")
+        _, globals.IMMEDIATE_TO_SORT_TRACKS = get_updated_playlist(globals.IMMEDIATE_TO_SORT_TRACKS, globals.NEW_IMMEDIATE_TO_SORT[1], "immediate_to_sort_tracks", printout)
+        # if printout: print("Finished updating IMMEDIATE TO-SORT")
+        _, globals.LIBRARY_TO_SORT_TRACKS = get_updated_playlist(globals.LIBRARY_TO_SORT_TRACKS, globals.NEW_LIBRARY_TO_SORT[1], "library_to_sort_tracks", printout)
+        # if printout: print("Finished updating LIBRARY TO-SORT")
 
-        update_playlist_folder(globals.GENRES, globals.NEW_GENRES, "genre_id_to_tracks")
-        # print("Finished updating Genres")
-        update_playlist_folder(globals.ARCHIVED_MIXTAPES, globals.NEW_ARCHIVED_MIXTAPES, "archived_mixtape_id_to_tracks")
-        # print("Finished updating Archived Mixtapes")
-        update_playlist_folder(globals.ARCHIVED_RECORDS, globals.NEW_ARCHIVED_RECORDS, "archived_record_id_to_tracks")
-        # print("Finished updating Archived Records")
+        update_playlist_folder(globals.GENRES, globals.NEW_GENRES, "genre_id_to_tracks", printout)
+        # if printout: print("Finished updating Genres")
+        update_playlist_folder(globals.ARCHIVED_MIXTAPES, globals.NEW_ARCHIVED_MIXTAPES, "archived_mixtape_id_to_tracks", printout)
+        # if printout: print("Finished updating Archived Mixtapes")
+        update_playlist_folder(globals.ARCHIVED_RECORDS, globals.NEW_ARCHIVED_RECORDS, "archived_record_id_to_tracks", printout)
+        # if printout: print("Finished updating Archived Records")
 
         total_iteration_time = time() - total_start
         running_times.append(total_iteration_time)
-        print(f"Finished loop iteration ({round(total_iteration_time, 3)}s)")
+        if printout: print(f"Finished loop iteration ({round(total_iteration_time, 3)}s)")
         if len(running_times) == 6:
             running_times.pop(0)
         if len(running_times) == 5:
-            print(f"~~~5-point moving average ({round(sum(running_times)/5, 3)}s)~~~")
+            if printout: print(f"~~~5-point moving average ({round(sum(running_times)/5, 3)}s)~~~")

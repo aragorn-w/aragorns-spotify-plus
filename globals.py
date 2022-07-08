@@ -2,7 +2,8 @@ import sys
 sys.dont_write_bytecode = True
 from os import getenv
 import json
-from itertools import cycle
+
+from spotipy import SpotifyException
 
 import spotipy
 from spotipy.oauth2 import SpotifyClientCredentials
@@ -10,21 +11,16 @@ from spotipy.oauth2 import SpotifyClientCredentials
 
 # Establish Spotify client credentials
 
-NUM_CLIENTS = 6
-API_POOL = cycle([spotipy.Spotify(client_credentials_manager=SpotifyClientCredentials(client_id=getenv(f"SPOTIFY_CLIENT_ID_{client_num}"), client_secret=getenv(f"SPOTIFY_CLIENT_SECRET_{client_num}"))) for client_num in range(1, NUM_CLIENTS, 1)])
-
-def NEXT_API():
-    return next(API_POOL)
-
+CLIENT_ID = getenv(f"SPOTIFY_CLIENT_ID")
+print(f"CLIENT_ID = {CLIENT_ID}")
+SPOTIFY_API = spotipy.Spotify(client_credentials_manager=SpotifyClientCredentials(client_id=CLIENT_ID, client_secret=getenv(f"SPOTIFY_CLIENT_SECRET")), requests_timeout=15, retries=5, status_retries=3, status_forcelist=(403, 404, 429, 500, 502, 503, 504))
 LIBRARY_SPOTIFY_ACCOUNT_ID = getenv('SPOTIFY_PLUS_SECONDARY_ACCOUNT_USER_ID')
 
-def ASSERT_API_LIMIT(response_dict):
-    try:
-        if response_dict["error"]["status"] == 429:
-            print("!!! API rate limit exceeded !!!")
-            assert 1 == 0
-    except KeyError:
-        pass
+def HANDLE_SPOTIFY_EXCEPTION(spotify_exception: SpotifyException):
+    print(f"!!! SPOTIFY EXCEPTION: {spotify_exception.code} !!!")
+    print(f"!!! Reason: {spotify_exception.reason} !!!")
+    print(f"!!! Message: {spotify_exception.msg} !!!")
+    assert 1 == 0
 
 
 # Load the saved libraries

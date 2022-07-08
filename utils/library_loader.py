@@ -2,6 +2,8 @@ import sys
 sys.dont_write_bytecode = True
 from threading import Thread
 
+from spotipy import SpotifyException
+
 import globals
 
 
@@ -9,8 +11,10 @@ import globals
 def get_simplified_tracks(playlist_id):
     simplified_tracks = []
 
-    current_page = globals.NEXT_API().playlist_items(f'spotify:playlist:{playlist_id}', fields='items.track.id,items.track.is_local,items.track.name,next')
-    globals.ASSERT_API_LIMIT(current_page)
+    try:
+        current_page = globals.SPOTIFY_API.playlist_items(f'spotify:playlist:{playlist_id}', fields='items.track.id,items.track.is_local,items.track.name,next')
+    except SpotifyException as e:
+        globals.HANDLE_SPOTIFY_EXCEPTION(e)
 
     while current_page:
         for item in current_page['items']:
@@ -29,8 +33,10 @@ def get_simplified_tracks(playlist_id):
             simplified_tracks.append(new_track)
 
         if current_page['next']:
-            current_page = globals.NEXT_API().next(current_page)
-            globals.ASSERT_API_LIMIT(current_page)
+            try:
+                current_page = globals.SPOTIFY_API.next(current_page)
+            except SpotifyException as e:
+                globals.HANDLE_SPOTIFY_EXCEPTION(e)
             
         else:
             current_page = None
@@ -47,8 +53,10 @@ def get_libraries():
 
     threads = []
 
-    current_page = globals.NEXT_API().user_playlists(globals.LIBRARY_SPOTIFY_ACCOUNT_ID)
-    globals.ASSERT_API_LIMIT(current_page)
+    try:
+        current_page = globals.SPOTIFY_API.user_playlists(globals.LIBRARY_SPOTIFY_ACCOUNT_ID)
+    except SpotifyException as e:
+        globals.HANDLE_SPOTIFY_EXCEPTION(e)
     while current_page:
         for playlist in current_page['items']:
             id = playlist['id']
@@ -75,8 +83,10 @@ def get_libraries():
                 threads.append(thread)
 
         if current_page['next']:
-            current_page = globals.NEXT_API().next(current_page)
-            globals.ASSERT_API_LIMIT(current_page)
+            try:
+                current_page = globals.SPOTIFY_API.next(current_page)
+            except SpotifyException as e:
+                globals.HANDLE_SPOTIFY_EXCEPTION(e)
         else:
             current_page = None
     

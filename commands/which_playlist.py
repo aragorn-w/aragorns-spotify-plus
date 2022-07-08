@@ -2,6 +2,8 @@ import sys
 sys.dont_write_bytecode = True
 from difflib import get_close_matches
 
+from spotipy import SpotifyException
+
 import globals
 from utils.library_loader import *
 
@@ -21,8 +23,11 @@ def url_which(track_url: str):
     contianing_archived_records = []
 
     for playlist_id in containing_playlists_id_to_name:
-        response = globals.NEXT_API().playlist(f"spotify:playlist:{playlist_id}", fields="name")
-        globals.ASSERT_API_LIMIT(response)
+        try:
+            response = globals.SPOTIFY_API.playlist(f"spotify:playlist:{playlist_id}", fields="name")
+        except SpotifyException as e:
+            globals.HANDLE_SPOTIFY_EXCEPTION(e)
+            
         playlist_name = response["name"]
         if playlist_name.startswith("[1]"):
             containing_immediate_to_sort = playlist_name
