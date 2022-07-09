@@ -5,7 +5,7 @@ from threading import Thread
 from multiprocessing.connection import Listener
 
 import globals
-from utils.library_updater import update_library_tracks_loop
+from utils.library_updater import *
 from commands.which_playlist import *
 
 
@@ -54,5 +54,10 @@ if __name__ == "__main__":
     server_listener_thread.daemon = True
     server_listener_thread.start()
 
-    while True:
-        pass
+    try:
+        while True:
+            pass
+    except KeyboardInterrupt:
+        raise KeyboardInterrupt
+    finally:
+        save_libraries()

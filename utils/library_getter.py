@@ -85,12 +85,12 @@ def get_libraries():
                 thread.start()
                 threads.append(thread)
             elif name.startswith("[1]"):
-                thread = Thread(target=store_simplified_tracks, args=(globals.IMMEDIATE_TO_SORT, 1, id))
+                thread = Thread(target=store_simplified_tracks, args=(globals.IMMEDIATE_TO_SORT, "tracks", id))
                 thread.daemon = True
                 thread.start()
                 threads.append(thread)
             elif name.startswith("[2]"):
-                thread = Thread(target=store_simplified_tracks, args=(globals.LIBRARY_TO_SORT, 1, id))
+                thread = Thread(target=store_simplified_tracks, args=(globals.LIBRARY_TO_SORT, "tracks", id))
                 thread.daemon = True
                 thread.start()
                 threads.append(thread)
@@ -109,8 +109,8 @@ def get_libraries():
 def load_all_playlist_id_to_tracks():
     all_playlist_id_to_tracks = {}
     
-    all_playlist_id_to_tracks[globals.IMMEDIATE_TO_SORT[0]] = globals.IMMEDIATE_TO_SORT[1]
-    all_playlist_id_to_tracks[globals.LIBRARY_TO_SORT[0]] = globals.LIBRARY_TO_SORT[1]
+    all_playlist_id_to_tracks[globals.IMMEDIATE_TO_SORT["id"]] = globals.IMMEDIATE_TO_SORT["tracks"]
+    all_playlist_id_to_tracks[globals.LIBRARY_TO_SORT["id"]] = globals.LIBRARY_TO_SORT["tracks"]
 
     all_playlist_id_to_tracks.update(globals.GENRES)
     all_playlist_id_to_tracks.update(globals.ARCHIVED_MIXTAPES)
