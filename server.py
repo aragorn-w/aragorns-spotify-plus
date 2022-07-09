@@ -25,7 +25,7 @@ def server_listener_loop():
     while True:
         print("Waiting on connection...")
         CLIENT = listener.accept()
-        print(f"Connection accepted from {listener.last_accepted}")    
+        print(f"Connection accepted from {listener.last_accepted}")
 
         message = None
         try:

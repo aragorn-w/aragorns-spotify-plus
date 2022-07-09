@@ -55,10 +55,6 @@ def store_simplified_tracks(library: dict, key: Any, playlist_id: str):
 @raise_timeout("!!! Timed out getting new libraries !!!")
 @threading_timeoutable("TIMED OUT")
 def get_libraries():
-    globals.NEW_GENRES = {}
-    globals.NEW_ARCHIVED_MIXTAPES = {}
-    globals.NEW_ARCHIVED_RECORDS = {}
-
     threads = []
 
     try:
@@ -67,36 +63,39 @@ def get_libraries():
         globals.HANDLE_SPOTIFY_EXCEPTION(e)
     
     while current_page:
-        for playlist in current_page['items']:
-            id = playlist['id']
+        for playlist in current_page["items"]:
+            id = playlist["id"]
+            name = playlist["name"]
 
-            if playlist['name'].startswith('[G]'):
-                thread = Thread(target=store_simplified_tracks, args=(globals.NEW_GENRES, id, id))
+            globals.PLAYLIST_ID_TO_NAME[id] = name
+
+            if name.startswith("[G]"):
+                thread = Thread(target=store_simplified_tracks, args=(globals.GENRES, id, id))
                 thread.daemon = True
                 thread.start()
                 threads.append(thread)
-            elif playlist['name'].startswith('[AM]'):
-                thread = Thread(target=store_simplified_tracks, args=(globals.NEW_ARCHIVED_MIXTAPES, id, id))
+            elif name.startswith("[AM]"):
+                thread = Thread(target=store_simplified_tracks, args=(globals.ARCHIVED_MIXTAPES, id, id))
                 thread.daemon = True
                 thread.start()
                 threads.append(thread)
-            elif playlist['name'].startswith('[AR]'):
-                thread = Thread(target=store_simplified_tracks, args=(globals.NEW_ARCHIVED_RECORDS, id, id))
+            elif name.startswith("[AR]"):
+                thread = Thread(target=store_simplified_tracks, args=(globals.ARCHIVED_RECORDS, id, id))
                 thread.daemon = True
                 thread.start()
                 threads.append(thread)
-            elif playlist['name'].startswith('[1]'):
-                thread = Thread(target=store_simplified_tracks, args=(globals.NEW_IMMEDIATE_TO_SORT, 1, id))
+            elif name.startswith("[1]"):
+                thread = Thread(target=store_simplified_tracks, args=(globals.IMMEDIATE_TO_SORT, 1, id))
                 thread.daemon = True
                 thread.start()
                 threads.append(thread)
-            elif playlist['name'].startswith('[2]'):
-                thread = Thread(target=store_simplified_tracks, args=(globals.NEW_LIBRARY_TO_SORT, 1, id))
+            elif name.startswith("[2]"):
+                thread = Thread(target=store_simplified_tracks, args=(globals.LIBRARY_TO_SORT, 1, id))
                 thread.daemon = True
                 thread.start()
                 threads.append(thread)
 
-        if current_page['next']:
+        if current_page["next"]:
             try:
                 current_page = globals.SPOTIFY_API.next(current_page)
             except SpotifyException as e:
@@ -110,8 +109,8 @@ def get_libraries():
 def load_all_playlist_id_to_tracks():
     all_playlist_id_to_tracks = {}
     
-    all_playlist_id_to_tracks[globals.NEW_IMMEDIATE_TO_SORT[0]] = globals.IMMEDIATE_TO_SORT_TRACKS
-    all_playlist_id_to_tracks[globals.NEW_LIBRARY_TO_SORT[0]] = globals.LIBRARY_TO_SORT_TRACKS
+    all_playlist_id_to_tracks[globals.IMMEDIATE_TO_SORT[0]] = globals.IMMEDIATE_TO_SORT[1]
+    all_playlist_id_to_tracks[globals.LIBRARY_TO_SORT[0]] = globals.LIBRARY_TO_SORT[1]
 
     all_playlist_id_to_tracks.update(globals.GENRES)
     all_playlist_id_to_tracks.update(globals.ARCHIVED_MIXTAPES)
