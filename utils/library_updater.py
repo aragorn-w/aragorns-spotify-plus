@@ -33,13 +33,11 @@ def update_library_tracks_loop(printout: bool=False):
     running_times = []
 
     while True:
-        total_start = time()
-
         if printout: print("\nNew library-update iteration...")
+        total_start = time()
 
         if printout: print("Started getting new libraries...")
         start = time()
-        
         get_libraries(timeout=GET_LIBRARY_TIMEOUT)
         if printout: print(f"Got new libraries ({round(time() - start, 3)}s)")
 
