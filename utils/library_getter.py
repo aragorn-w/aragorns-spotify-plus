@@ -69,28 +69,20 @@ def get_libraries():
 
             globals.PLAYLIST_ID_TO_NAME[id] = name
 
-            if name.startswith("[G]"):
-                thread = Thread(target=store_simplified_tracks, args=(globals.GENRES, id, id))
-                thread.daemon = True
-                thread.start()
-                threads.append(thread)
-            elif name.startswith("[AM]"):
-                thread = Thread(target=store_simplified_tracks, args=(globals.ARCHIVED_MIXTAPES, id, id))
-                thread.daemon = True
-                thread.start()
-                threads.append(thread)
-            elif name.startswith("[AR]"):
-                thread = Thread(target=store_simplified_tracks, args=(globals.ARCHIVED_RECORDS, id, id))
-                thread.daemon = True
-                thread.start()
-                threads.append(thread)
-            elif name.startswith("[1]"):
+            if name.startswith("[1]"):
                 thread = Thread(target=store_simplified_tracks, args=(globals.IMMEDIATE_TO_SORT, "tracks", id))
-                thread.daemon = True
-                thread.start()
-                threads.append(thread)
             elif name.startswith("[2]"):
                 thread = Thread(target=store_simplified_tracks, args=(globals.LIBRARY_TO_SORT, "tracks", id))
+            elif name.startswith("[G]"):
+                thread = Thread(target=store_simplified_tracks, args=(globals.GENRES, id, id))
+            elif name.startswith("[AM]"):
+                thread = Thread(target=store_simplified_tracks, args=(globals.ARCHIVED_MIXTAPES, id, id))
+            elif name.startswith("[AR]"):
+                thread = Thread(target=store_simplified_tracks, args=(globals.ARCHIVED_RECORDS, id, id))
+            else:
+                thread = None
+            
+            if thread:
                 thread.daemon = True
                 thread.start()
                 threads.append(thread)

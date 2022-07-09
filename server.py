@@ -58,6 +58,7 @@ if __name__ == "__main__":
         while True:
             pass
     except KeyboardInterrupt:
-        raise KeyboardInterrupt
+        print("!!! Keyboard interruption triggered !!!")
     finally:
         save_libraries()
+        print("Libraries saved before exiting!")
