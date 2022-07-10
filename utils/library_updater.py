@@ -1,30 +1,13 @@
 import sys
 sys.dont_write_bytecode = True
-import json
-from typing import Union
 from time import time, sleep
 
-import globals
 from utils.library_getter import *
+from utils.library_tools import *
 
 
 LIBRARY_UPDATE_PAUSE_TIME = 6
 
-
-def save_library_as_JSON(JSON_name: str, library: Union[list, dict]):
-    with open(f"saved_libraries/{JSON_name}.json", "w", encoding="utf-8") as outFile:
-        json.dump(library, outFile, ensure_ascii=False, indent=4)
-
-# Save most updated libraries tracks and namesto JSONs
-def save_libraries():
-    save_library_as_JSON("immediate_to_sort_tracks", globals.IMMEDIATE_TO_SORT["tracks"])
-    save_library_as_JSON("library_to_sort_tracks", globals.LIBRARY_TO_SORT["tracks"])
-
-    save_library_as_JSON("genre_id_to_tracks", globals.GENRES)
-    save_library_as_JSON("archived_mixtape_id_to_tracks", globals.ARCHIVED_MIXTAPES)
-    save_library_as_JSON("archived_record_id_to_tracks", globals.ARCHIVED_RECORDS)
-
-    save_library_as_JSON("playlist_id_to_name", globals.PLAYLIST_ID_TO_NAME)
 
 # Main loop for updating the saved playlist library JSONs
 def update_library_tracks_loop(printout: bool=False):

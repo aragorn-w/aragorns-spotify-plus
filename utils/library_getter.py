@@ -97,20 +97,3 @@ def get_libraries():
     
     for thread in threads:
         thread.join()
-
-def load_all_playlist_id_to_tracks():
-    all_playlist_id_to_tracks = {}
-    
-    all_playlist_id_to_tracks[globals.IMMEDIATE_TO_SORT["id"]] = globals.IMMEDIATE_TO_SORT["tracks"]
-    all_playlist_id_to_tracks[globals.LIBRARY_TO_SORT["id"]] = globals.LIBRARY_TO_SORT["tracks"]
-
-    all_playlist_id_to_tracks.update(globals.GENRES)
-    all_playlist_id_to_tracks.update(globals.ARCHIVED_MIXTAPES)
-    all_playlist_id_to_tracks.update(globals.ARCHIVED_RECORDS)
-
-    return all_playlist_id_to_tracks
-
-def playlists_are_equal(playlist1: list[dict], playlist2: list[dict]):
-    two_not_one = [track for track in playlist2 if track not in playlist1]
-    one_not_two = [track for track in playlist1 if track not in playlist2]
-    return two_not_one == [] and one_not_two == []
