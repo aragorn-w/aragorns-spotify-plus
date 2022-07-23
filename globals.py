@@ -26,6 +26,7 @@ def HANDLE_SPOTIFY_EXCEPTION(spotify_exception: SpotifyException):
 # Inter-process socket stuff
 
 ADDRESS = ("localhost", int(getenv("SPOTIFY_PLUS_PORT")))
+SOCKET_AUTHKEY = getenv("SPOTIFY_PLUS_AUTHKEY").encode()
 
 
 # Saved library stuff

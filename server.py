@@ -20,7 +20,7 @@ def send_client(command: Callable, *args, **kwargs):
 def server_listener_loop():
     global CLIENT
 
-    listener = Listener(globals.ADDRESS, authkey=b"my secret password is this")
+    listener = Listener(globals.ADDRESS, authkey=globals.SOCKET_AUTHKEY)
 
     while True:
         print("Waiting on connection...")

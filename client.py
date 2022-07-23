@@ -2,19 +2,17 @@ import sys
 sys.dont_write_bytecode = True
 from multiprocessing.connection import Client
 import atexit
-from os import getenv
 
 import typer
 
 import globals
-from utils.library_getter import *
 
 
 spotify_plus = typer.Typer()
 
 SERVER = None
 if __name__ == "__main__":
-    SERVER = Client(globals.ADDRESS, authkey=b"my secret password is this")
+    SERVER = Client(globals.ADDRESS, authkey=globals.SOCKET_AUTHKEY)
 
 # Fetches the secondary-account playlists a given track ID, from the track link, is contained within
 @spotify_plus.command()
