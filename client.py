@@ -29,7 +29,7 @@ def request_and_print(command: str, arguments: list[str]):
     global SERVER
     SERVER.send([command] + list(arguments))
 
-    typer.echo(f"Awaiting server response for \'{command}\' command...")
+    typer.echo(f"Awaiting server response for \'{command}\' command...\n")
     output = SERVER.recv()
     typer.echo(output)
 
