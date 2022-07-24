@@ -50,6 +50,9 @@ def get_simplified_tracks(playlist_id: str):
     return simplified_tracks
 
 def store_simplified_tracks(library: dict, key: Any, playlist_id: str):
+    if key == "tracks":
+        library["id"] = playlist_id
+        library["name"] = globals.PLAYLIST_ID_TO_NAME[playlist_id]
     library[key] = get_simplified_tracks(playlist_id)
 
 @raise_timeout("!!! Timed out getting new libraries !!!")
@@ -62,23 +65,34 @@ def get_libraries():
     except SpotifyException as e:
         globals.HANDLE_SPOTIFY_EXCEPTION(e)
     
+    # We go through the trouble of holding the API-gotten playlist data in staging variables so that any deleted playlists don't remain
+
+    new_immediate_to_sort = {}
+    new_library_to_sort = {}
+    
+    new_genres = {}
+    new_archived_mixtapes = {}
+    new_archived_records = {}
+
+    new_playlist_id_to_name = {}
+
     while current_page:
         for playlist in current_page["items"]:
             id = playlist["id"]
             name = playlist["name"]
 
-            globals.PLAYLIST_ID_TO_NAME[id] = name
+            new_playlist_id_to_name[id] = name
 
             if name.startswith("[1]"):
-                thread = Thread(target=store_simplified_tracks, args=(globals.IMMEDIATE_TO_SORT, "tracks", id))
+                thread = Thread(target=store_simplified_tracks, args=(new_immediate_to_sort, "tracks", id))
             elif name.startswith("[2]"):
-                thread = Thread(target=store_simplified_tracks, args=(globals.LIBRARY_TO_SORT, "tracks", id))
+                thread = Thread(target=store_simplified_tracks, args=(new_library_to_sort, "tracks", id))
             elif name.startswith("[G]"):
-                thread = Thread(target=store_simplified_tracks, args=(globals.GENRES, id, id))
+                thread = Thread(target=store_simplified_tracks, args=(new_genres, id, id))
             elif name.startswith("[AM]"):
-                thread = Thread(target=store_simplified_tracks, args=(globals.ARCHIVED_MIXTAPES, id, id))
+                thread = Thread(target=store_simplified_tracks, args=(new_archived_mixtapes, id, id))
             elif name.startswith("[AR]"):
-                thread = Thread(target=store_simplified_tracks, args=(globals.ARCHIVED_RECORDS, id, id))
+                thread = Thread(target=store_simplified_tracks, args=(new_archived_records, id, id))
             else:
                 thread = None
             
@@ -97,3 +111,12 @@ def get_libraries():
     
     for thread in threads:
         thread.join()
+    
+    globals.IMMEDIATE_TO_SORT = new_immediate_to_sort
+    globals.LIBRARY_TO_SORT = new_library_to_sort
+
+    globals.GENRES = new_genres
+    globals.ARCHIVED_MIXTAPES = new_archived_mixtapes
+    globals.ARCHIVED_RECORDS = new_archived_records
+
+    globals.PLAYLIST_ID_TO_NAME = new_playlist_id_to_name

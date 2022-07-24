@@ -37,11 +37,13 @@ def LOAD_LIBRARY(library_name: str):
         library = json.load(file)
     return library
 
-IMMEDIATE_TO_SORT = {"id": "06sD1Pm4x5hLo2gq9d8G6G", "tracks": LOAD_LIBRARY("immediate_to_sort_tracks")}
-LIBRARY_TO_SORT = {"id": "2pdYtdLZcMLG6kAm7mRb4M", "tracks": LOAD_LIBRARY("library_to_sort_tracks")}
+IMMEDIATE_TO_SORT = {"id": "06sD1Pm4x5hLo2gq9d8G6G", "tracks": LOAD_LIBRARY("immediate_to_sort_tracks"), "name": "[1] IMMEDIATE TO-SORT"}
+LIBRARY_TO_SORT = {"id": "2pdYtdLZcMLG6kAm7mRb4M", "tracks": LOAD_LIBRARY("library_to_sort_tracks"), "name": "[2] LIBRARY TO-SORT"}
 
+# id-->track list
 GENRES = LOAD_LIBRARY("genre_id_to_tracks")
 ARCHIVED_MIXTAPES = LOAD_LIBRARY("archived_mixtape_id_to_tracks")
 ARCHIVED_RECORDS = LOAD_LIBRARY("archived_record_id_to_tracks")
 
+# id-->playlist name
 PLAYLIST_ID_TO_NAME = LOAD_LIBRARY("playlist_id_to_name")
