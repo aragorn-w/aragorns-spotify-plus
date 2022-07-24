@@ -1,11 +1,11 @@
 import sys
 sys.dont_write_bytecode = True
-from typing import Any
 from threading import Thread
 
 from spotipy import SpotifyException
 
 import globals
+from utils.timeoutable_queue import TimeoutableQueue
 
 
 GET_LIBRARY_TIMEOUT = 16
@@ -47,15 +47,37 @@ def get_simplified_tracks(playlist_id: str):
     
     return simplified_tracks
 
-def store_simplified_tracks(library: dict, key: Any, playlist_id: str):
-    if key == "tracks":
-        library["id"] = playlist_id
-        library["name"] = globals.PLAYLIST_ID_TO_NAME[playlist_id]
-    library[key] = get_simplified_tracks(playlist_id)
+# def store_simplified_tracks(library: dict, key: Any, playlist_id: str):
+#     if key == "tracks":
+#         library["id"] = playlist_id
+#         library["name"] = globals.PLAYLIST_ID_TO_NAME[playlist_id]
+#     library[key] = get_simplified_tracks(playlist_id)
+
+def get_libraries_crawl(queue: TimeoutableQueue, results: dict[str, dict]):
+    while not queue.empty():
+        library_name, key, playlist_id = queue.get()
+        
+        if library_name.startswith("[1]"):
+            target_result = results["immediate_to_sort"]
+        elif library_name.startswith("[2]"):
+            target_result = results["library_to_sort"]
+        elif library_name.startswith("[G]"):
+            target_result = results["genres"]
+        elif library_name.startswith("[AM]"):
+            target_result = results["archived_mixtapes"]
+        elif library_name.startswith("[AR]"):
+            target_result = results["archived_records"]
+        
+        if key == "tracks":
+            target_result["id"] = playlist_id
+            target_result["name"] = globals.PLAYLIST_ID_TO_NAME[playlist_id]
+
+        target_result[key] = get_simplified_tracks(playlist_id)
+
+        queue.task_done()
+    return True
 
 def get_libraries():
-    threads = []
-
     try:
         current_page = globals.SPOTIFY_API.user_playlists(globals.LIBRARY_SPOTIFY_ACCOUNT_ID)
     except SpotifyException as e:
@@ -63,15 +85,11 @@ def get_libraries():
     
     # We go through the trouble of holding the API-gotten playlist data in staging variables so that any deleted playlists don't remain
 
-    new_immediate_to_sort = {}
-    new_library_to_sort = {}
-    
-    new_genres = {}
-    new_archived_mixtapes = {}
-    new_archived_records = {}
-
     new_playlist_id_to_name = {}
 
+    queue = TimeoutableQueue()
+    results = {"immediate_to_sort": {}, "library_to_sort": {}, "genres": {}, "archived_mixtapes": {}, "archived_records": {}}
+    
     while current_page:
         for playlist in current_page["items"]:
             id = playlist["id"]
@@ -79,23 +97,10 @@ def get_libraries():
 
             new_playlist_id_to_name[id] = name
 
-            if name.startswith("[1]"):
-                thread = Thread(target=store_simplified_tracks, args=(new_immediate_to_sort, "tracks", id))
-            elif name.startswith("[2]"):
-                thread = Thread(target=store_simplified_tracks, args=(new_library_to_sort, "tracks", id))
-            elif name.startswith("[G]"):
-                thread = Thread(target=store_simplified_tracks, args=(new_genres, id, id))
-            elif name.startswith("[AM]"):
-                thread = Thread(target=store_simplified_tracks, args=(new_archived_mixtapes, id, id))
-            elif name.startswith("[AR]"):
-                thread = Thread(target=store_simplified_tracks, args=(new_archived_records, id, id))
-            else:
-                thread = None
-            
-            if thread:
-                thread.daemon = True
-                thread.start()
-                threads.append(thread)
+            if name.startswith("[1]") or name.startswith("[2]"):
+                queue.put((name, "tracks", id))
+            elif name.startswith("[G]") or name.startswith("[AM]") or name.startswith("[AR]"):
+                queue.put((name, id, id))
 
         if current_page["next"]:
             try:
@@ -105,14 +110,18 @@ def get_libraries():
         else:
             current_page = None
     
-    for thread in threads:
-        thread.join()
-    
-    globals.IMMEDIATE_TO_SORT = new_immediate_to_sort
-    globals.LIBRARY_TO_SORT = new_library_to_sort
-
-    globals.GENRES = new_genres
-    globals.ARCHIVED_MIXTAPES = new_archived_mixtapes
-    globals.ARCHIVED_RECORDS = new_archived_records
-
     globals.PLAYLIST_ID_TO_NAME = new_playlist_id_to_name
+
+    for _ in range(len(new_playlist_id_to_name)):
+        worker = Thread(target=get_libraries_crawl, args=(queue, results))
+        worker.daemon = True
+        worker.start()
+
+    queue.join_with_timeout(GET_LIBRARY_TIMEOUT)
+    
+    globals.IMMEDIATE_TO_SORT = results["immediate_to_sort"]
+    globals.LIBRARY_TO_SORT = results["library_to_sort"]
+
+    globals.GENRES = results["genres"]
+    globals.ARCHIVED_MIXTAPES = results["archived_mixtapes"]
+    globals.ARCHIVED_RECORDS = results["archived_records"]
