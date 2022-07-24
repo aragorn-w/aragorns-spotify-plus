@@ -1,11 +1,11 @@
 import sys
 sys.dont_write_bytecode = True
 from threading import Thread
+from queue import Queue
 
 from spotipy import SpotifyException
 
 import globals
-from utils.timeoutable_queue import TimeoutableQueue
 
 
 GET_LIBRARY_TIMEOUT = 16
@@ -53,7 +53,7 @@ def get_simplified_tracks(playlist_id: str):
 #         library["name"] = globals.PLAYLIST_ID_TO_NAME[playlist_id]
 #     library[key] = get_simplified_tracks(playlist_id)
 
-def get_libraries_crawl(queue: TimeoutableQueue, results: dict[str, dict]):
+def get_libraries_crawl(queue: Queue, results: dict[str, dict]):
     while not queue.empty():
         library_name, key, playlist_id = queue.get()
         
@@ -78,16 +78,11 @@ def get_libraries_crawl(queue: TimeoutableQueue, results: dict[str, dict]):
     return True
 
 def get_libraries():
-    try:
-        current_page = globals.SPOTIFY_API.user_playlists(globals.LIBRARY_SPOTIFY_ACCOUNT_ID)
-    except SpotifyException as e:
-        globals.HANDLE_SPOTIFY_EXCEPTION(e)
-    
     # We go through the trouble of holding the API-gotten playlist data in staging variables so that any deleted playlists don't remain
 
     new_playlist_id_to_name = {}
 
-    queue = TimeoutableQueue()
+    queue = Queue()
     results = {"immediate_to_sort": {}, "library_to_sort": {}, "genres": {}, "archived_mixtapes": {}, "archived_records": {}}
     
     while current_page:
@@ -117,7 +112,7 @@ def get_libraries():
         worker.daemon = True
         worker.start()
 
-    queue.join_with_timeout(GET_LIBRARY_TIMEOUT)
+    queue.join()
     
     globals.IMMEDIATE_TO_SORT = results["immediate_to_sort"]
     globals.LIBRARY_TO_SORT = results["library_to_sort"]
