@@ -16,13 +16,13 @@ if __name__ == "__main__":
 
 # Fetches the secondary-account playlists a given track ID, from the track link, is contained within
 @spotify_plus.command()
-def url_which(track_url: str):
-    request_and_print("uw", [track_url])
+def uw(track_url: str):
+    request_and_print("url-which", [track_url])
 
 # Fetches close-matching tracks, by name, and the containing playlists of said tracks
 @spotify_plus.command()
-def name_which(track_name: str):
-    request_and_print("nw", [track_name])
+def nw(track_name: str):
+    request_and_print("name-which", [track_name])
 
 
 def request_and_print(command: str, arguments: list[str]):
