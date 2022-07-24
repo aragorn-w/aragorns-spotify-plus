@@ -85,6 +85,11 @@ def get_libraries():
     queue = Queue()
     results = {"immediate_to_sort": {}, "library_to_sort": {}, "genres": {}, "archived_mixtapes": {}, "archived_records": {}}
     
+    try:
+        current_page = globals.SPOTIFY_API.user_playlists(globals.LIBRARY_SPOTIFY_ACCOUNT_ID)
+    except SpotifyException as e:
+        globals.HANDLE_SPOTIFY_EXCEPTION(e)
+
     while current_page:
         for playlist in current_page["items"]:
             id = playlist["id"]
