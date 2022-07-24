@@ -62,3 +62,4 @@ if __name__ == "__main__":
     finally:
         save_libraries()
         print("Libraries saved before exiting!")
+        print("\nServer process terminated.")
