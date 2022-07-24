@@ -37,10 +37,10 @@ def server_listener_loop():
         command = message[0]
         arguments = message[1:]
 
-        if command == "url-which":
+        if command == "uw":
             track_url = arguments[0]
             send_client(url_which, track_url)
-        elif command == "name-which":
+        elif command == "nw":
             track_name = arguments[0]
             send_client(name_which, track_name)
 
