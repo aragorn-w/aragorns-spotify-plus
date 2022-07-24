@@ -25,7 +25,7 @@ def update_library_tracks_loop(printout: bool=False):
         get_libraries_thread.start()
         get_libraries_thread.join(timeout=GET_LIBRARY_TIMEOUT)
         if get_libraries_thread.is_alive():
-            print("!!! GET LIBRARIES TIMED OUT !!!")
+            print("!!! TIMED OUT TRYING TO GET LIBRARIES !!!")
         else:
             if printout: print(f"Got new libraries ({round(time() - start, 3)}s)")
 
