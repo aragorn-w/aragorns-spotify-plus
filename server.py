@@ -9,27 +9,27 @@ from utils.library_updater import *
 from commands.which_playlist import *
 
 
-CLIENT = None
+SERVER = None
 
 def send_client(command: Callable, *args, **kwargs):
-    global CLIENT
+    global SERVER
     print(f"Sending output of \'{command.__name__}\' command to client...")
-    CLIENT.send(command(*args, **kwargs))
+    SERVER.send(command(*args, **kwargs))
     print(f"Output of \'{command.__name__}\' command sent to client")
 
 def server_listener_loop():
-    global CLIENT
+    global SERVER
 
     listener = Listener(globals.ADDRESS, authkey=globals.SOCKET_AUTHKEY)
 
     while True:
         print("Waiting on connection...")
-        CLIENT = listener.accept()
+        SERVER = listener.accept()
         print(f"Connection accepted from {listener.last_accepted}")
 
         message = None
         try:
-            message = CLIENT.recv()
+            message = SERVER.recv()
         except EOFError:
             print(f"Connection from {listener.last_accepted} closed\n")
             continue

@@ -21,7 +21,7 @@ def update_library_tracks_loop(printout: bool=False):
 
         if printout: print("Started getting new libraries...")
         start = time()
-        get_libraries(timeout=GET_LIBRARY_TIMEOUT)
+        get_libraries()
         if printout: print(f"Got new libraries ({round(time() - start, 3)}s)")
 
         if printout: print(f"Running manual API sleep for ({LIBRARY_UPDATE_PAUSE_TIME}s)...")

@@ -4,9 +4,7 @@ from typing import Any
 from threading import Thread
 
 from spotipy import SpotifyException
-from stopit import threading_timeoutable
 
-from utils.timeout import raise_timeout
 import globals
 
 
@@ -55,8 +53,6 @@ def store_simplified_tracks(library: dict, key: Any, playlist_id: str):
         library["name"] = globals.PLAYLIST_ID_TO_NAME[playlist_id]
     library[key] = get_simplified_tracks(playlist_id)
 
-@raise_timeout("!!! Timed out getting new libraries !!!")
-@threading_timeoutable("TIMED OUT")
 def get_libraries():
     threads = []
 
