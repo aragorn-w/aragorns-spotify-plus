@@ -9,7 +9,7 @@ from utils.library_tools import *
 
 # Fetches the secondary-account playlists a given song link is contained within
 def url_which(track_url: str):
-    track_id = track_url[31:53]
+    track_id = track_url.split("https://open.spotify.com/track/", 1)[1]
 
     containing_immediate_to_sort = None
     containing_library_to_sort = None
@@ -52,6 +52,19 @@ def url_which(track_url: str):
         for archived_record in contianing_archived_records:
             out_strings.append(f"    {archived_record}\n")
         out_strings.append("\n")
+    return "".join(out_strings)
+
+def playlist_url_which(playlist_url: str):
+    uri_and_si = playlist_url.split("https://open.spotify.com/playlist/", 1)[1]
+    playlist_id = uri_and_si.split("?si=", 1)[0]
+    tracks = [{"name": track["name"], "id": track["id"]} for track in get_simplified_tracks(playlist_id)]
+    
+    out_strings = []
+    for track in tracks:
+        out_strings.append(f"{track['name']}\n")
+        for string in url_which(f"https://open.spotify.com/track/{track['id']}").split("\n"):
+            out_strings.append(f"{string}\n")
+        out_strings.append("\n\n")
     return "".join(out_strings)
 
 # Fetches the secondary-account's closest-matching songs of a given song name and their containing playlists

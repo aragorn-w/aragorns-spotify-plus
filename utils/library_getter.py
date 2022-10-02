@@ -47,12 +47,6 @@ def get_simplified_tracks(playlist_id: str):
     
     return simplified_tracks
 
-# def store_simplified_tracks(library: dict, key: Any, playlist_id: str):
-#     if key == "tracks":
-#         library["id"] = playlist_id
-#         library["name"] = globals.PLAYLIST_ID_TO_NAME[playlist_id]
-#     library[key] = get_simplified_tracks(playlist_id)
-
 def get_libraries_crawl(queue: Queue, results: dict[str, dict]):
     while not queue.empty():
         library_name, key, playlist_id = queue.get()

@@ -11,11 +11,16 @@ from commands.which_playlist import *
 
 SERVER = None
 
-def send_client(command: Callable, *args, **kwargs):
+def send_output(command: Callable, *args, **kwargs):
     global SERVER
     print(f"Sending output of \'{command.__name__}\' command to client...")
     SERVER.send(command(*args, **kwargs))
     print(f"Output of \'{command.__name__}\' command sent to client")
+
+def send_string(string):
+    print("Sending string literal to client...")
+    SERVER.send(string)
+    print("String literal sent to client")
 
 def server_listener_loop():
     global SERVER
@@ -39,10 +44,13 @@ def server_listener_loop():
 
         if command == "url-which":
             track_url = arguments[0]
-            send_client(url_which, track_url)
+            send_output(url_which, track_url)
+        elif command == "playlist-url-which":
+            playlist_url = arguments[0]
+            send_output(playlist_url_which, playlist_url)
         elif command == "name-which":
             track_name = arguments[0]
-            send_client(name_which, track_name)
+            send_output(name_which, track_name)
 
 
 if __name__ == "__main__":

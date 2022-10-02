@@ -19,6 +19,11 @@ if __name__ == "__main__":
 def uw(track_url: str):
     request_and_print("url-which", [track_url])
 
+# Runs the URL-which command on each track of a given playlist
+@spotify_plus.command()
+def puw(playlist_url: str):
+    request_and_print("playlist-url-which", [playlist_url])
+
 # Fetches close-matching tracks, by name, and the containing playlists of said tracks
 @spotify_plus.command()
 def nw(track_name: str):
