@@ -29,7 +29,13 @@ def puw(playlist_url: str):
 def nw(track_name: str):
     request_and_print("name-which", [track_name])
 
+# Adds a song, by URL, to the secondary-account's IMMEDIATE TO-SORT playlist
+@spotify_plus.command()
+def uai(track_url: str):
+    request_and_print("url-add-to-immediate", [track_url])
 
+
+# NOTE: Used both for sending commands and resource-requests
 def request_and_print(command: str, arguments: list[str]):
     global CLIENT
     CLIENT.send([command] + list(arguments))

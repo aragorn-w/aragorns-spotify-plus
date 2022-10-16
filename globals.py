@@ -14,7 +14,7 @@ from spotipy.oauth2 import SpotifyClientCredentials
 CLIENT_ID = getenv("SPOTIFY_CLIENT_ID")
 print(f"CLIENT_ID = {CLIENT_ID}")
 SPOTIFY_API = spotipy.Spotify(client_credentials_manager=SpotifyClientCredentials(client_id=CLIENT_ID, client_secret=getenv("SPOTIFY_CLIENT_SECRET")), requests_timeout=15, retries=5, status_retries=3, status_forcelist=(403, 404, 429, 500, 502, 503, 504))
-LIBRARY_SPOTIFY_ACCOUNT_ID = getenv("SPOTIFY_PLUS_SECONDARY_ACCOUNT_USER_ID")
+LIBRARY_SPOTIFY_ACCOUNT_ID = getenv("SPOTIFY_SECONDARY_ACCOUNT_USER_ID")
 
 def HANDLE_SPOTIFY_EXCEPTION(spotify_exception: SpotifyException):
     print(f"!!! SPOTIFY EXCEPTION: {spotify_exception.code} !!!")

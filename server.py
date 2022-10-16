@@ -7,6 +7,7 @@ from multiprocessing.connection import Listener
 import globals
 from utils.library_updater import *
 from commands.which_playlist import *
+from commands.add_to_playlist import *
 
 
 SERVER = None
@@ -42,15 +43,22 @@ def server_listener_loop():
         command = message[0]
         arguments = message[1:]
 
-        if command == "url-which":
-            track_url = arguments[0]
-            send_output(url_which, track_url)
-        elif command == "playlist-url-which":
-            playlist_url = arguments[0]
-            send_output(playlist_url_which, playlist_url)
-        elif command == "name-which":
-            track_name = arguments[0]
-            send_output(name_which, track_name)
+        match command:
+            case "url-which":
+                track_url = arguments[0]
+                send_output(url_which, track_url)
+            case "playlist-url-which":
+                playlist_url = arguments[0]
+                send_output(playlist_url_which, playlist_url)
+            case "name-which":
+                track_name = arguments[0]
+                send_output(name_which, track_name)
+            case "url-add-to-immediate":
+                track_url = arguments[0]
+                send_output(url_add_to_immediate, track_url)
+            
+            case _:
+                send_output(print, "ERROR: Unknown command-string identified in back-end")
 
 
 if __name__ == "__main__":
